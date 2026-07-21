@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "compact": "compact compile src/marketplace.compact src/managed/marketplace"
+    "compact": "compact compile src/marketplace.compact src/managed/marketplace",
+    "build": "npm run compact",
+    "test": "echo \"No contract tests defined\" && exit 0"
   },
   "devDependencies": {
     "@midnight-ntwrk/compact-runtime": "0.16.0"

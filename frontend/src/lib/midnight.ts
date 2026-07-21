@@ -1,5 +1,5 @@
 export interface MidnightWalletAPI {
-  enable?: () => Promise<unknown>;
+  enable?: () => Promise<MidnightWalletAPI>;
   [key: string]: unknown;
 }
 
