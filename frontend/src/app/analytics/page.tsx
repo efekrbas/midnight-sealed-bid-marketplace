@@ -25,6 +25,7 @@ export default function AnalyticsPage() {
   const [testers, setTesters] = useState<Tester[]>([]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTesters(generateMockTesters());
   }, []);
 

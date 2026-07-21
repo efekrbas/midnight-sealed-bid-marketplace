@@ -38,8 +38,8 @@ const AuctionDashboard = React.memo(() => {
     <div className="w-full max-w-7xl mx-auto py-8 px-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
         <div>
-          <h1 className="text-4xl font-bold mb-2 tracking-tight">Marketplace</h1>
-          <p className="text-gray-400">Discover and bid on exclusive assets with Midnight's privacy.</p>
+          <h1 className="text-4xl font-bold mb-2">Marketplace</h1>
+          <p className="text-gray-400">Discover and bid on exclusive assets with Midnight&apos;s privacy.</p>
         </div>
         
         <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
@@ -190,5 +190,7 @@ const AuctionDashboard = React.memo(() => {
     </div>
   );
 });
+
+AuctionDashboard.displayName = "AuctionDashboard";
 
 export default AuctionDashboard;

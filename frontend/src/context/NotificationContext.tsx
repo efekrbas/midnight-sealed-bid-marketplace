@@ -23,6 +23,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const notify = (title: string, message: string, type: NotificationType = 'info') => {
+    // eslint-disable-next-line react-hooks/purity
     const id = Math.random().toString(36).substring(2, 9);
     setNotifications((prev) => [...prev, { id, title, message, type }]);
 
