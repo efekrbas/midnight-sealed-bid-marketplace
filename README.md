@@ -9,9 +9,22 @@ Welcome to the **Level 5 Implementation** of the Midnight Network Sealed-Bid Auc
 | **Live Demo** | [midnight-sealed-bid-marketplace.vercel.app](https://midnight-sealed-bid-marketplace.vercel.app) | The live Next.js application connected to the Preprod network. |
 | **Demo Video** | [docs/DEMO_VIDEO.md](docs/DEMO_VIDEO.md) | A 3-minute video script & outline demonstrating the full flow. |
 | **50+ Testers** | [users_preprod.json](users_preprod.json) | Exported JSON list of 50 verified wallet addresses that interacted with the dApp. |
-| **User Feedback** | [FEEDBACK.md](FEEDBACK.md) | Aggregated feedback, bug reports, and UX ratings from the 50 testers, including a prioritized backlog. |
+| **User Feedback** | [docs/FEEDBACK.md](docs/FEEDBACK.md) | Aggregated feedback, bug reports, and UX ratings. |
 | **Architecture** | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Detailed Mermaid.js diagrams showing the ZK privacy boundary and settlement flow. |
-| **Onboarding** | [docs/USER_ONBOARDING.md](docs/USER_ONBOARDING.md) | A step-by-step guide on how to install Lace, get tNIGHT, and use the application. |
+| **Onboarding** | [docs/USAGE.md](docs/USAGE.md) | A step-by-step guide on how to install Lace, get tNIGHT, and use the application. |
+
+---
+
+## Contract Address
+| Network  | Address                              |
+|----------|--------------------------------------|
+| Preprod  | [CONTRACT ADDRESS — REQUIRED]        |
+
+## Level 5 — User Validation
+- Target: 50 Preprod users
+- Current: [I WILL UPDATE as users come in]
+- See USERS.md for wallet addresses
+- See docs/FEEDBACK.md for feedback log and changes
 
 ---
 
