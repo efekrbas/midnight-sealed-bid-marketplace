@@ -5,8 +5,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Lock, X, CheckCircle2, Loader2 } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 
+interface AuctionItem {
+  id: string;
+  title: string;
+  image: string;
+  status: string;
+  highestBid: string;
+  endsIn: string;
+}
+
 interface BidModalProps {
-  auction: any;
+  auction: AuctionItem;
   onClose: () => void;
 }
 
@@ -59,7 +68,7 @@ export default function BidModal({ auction, onClose }: BidModalProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="glass-panel w-full max-w-md relative overflow-hidden"
+        className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-md relative overflow-hidden shadow-2xl"
       >
         <button 
           onClick={onClose}

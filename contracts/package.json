@@ -1,0 +1,12 @@
+{
+  "name": "@midnight-sealed-bid-marketplace/contract",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "compact": "compact compile src/marketplace.compact src/managed/marketplace"
+  },
+  "devDependencies": {
+    "@midnight-ntwrk/compact-runtime": "0.16.0"
+  }
+}

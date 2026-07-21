@@ -4,9 +4,30 @@ import Link from 'next/link';
 import { Hexagon } from 'lucide-react';
 import { useState } from 'react';
 import OnboardingModal from './OnboardingModal';
+import { useNotification } from '@/context/NotificationContext';
+import { detectWallet } from '@/lib/midnight';
 
 export default function Navbar() {
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const { notify } = useNotification();
+
+  const handleConnect = async () => {
+    try {
+      // Check for real wallet extension (Lace or 1AM)
+      await detectWallet();
+      setIsConnected(true);
+      notify("Wallet Connected", "Successfully connected to Midnight Preprod.", "success");
+    } catch (error) {
+      console.warn("No wallet extension found. Entering simulation mode.", error);
+      setIsConnected(true);
+      notify(
+        "Simulation Mode", 
+        "No Lace/1AM extension detected in this browser. Mocking connection for testing.", 
+        "info"
+      );
+    }
+  };
 
   return (
     <>
@@ -33,8 +54,11 @@ export default function Navbar() {
             >
               How it works
             </button>
-            <button className="glass-button px-5 py-2 rounded-lg text-sm font-semibold">
-              Connect Wallet
+            <button 
+              onClick={handleConnect}
+              className="glass-button px-5 py-2 rounded-lg text-sm font-semibold"
+            >
+              {isConnected ? "Connected: 0x3f...9a2" : "Connect Wallet"}
             </button>
           </div>
         </div>

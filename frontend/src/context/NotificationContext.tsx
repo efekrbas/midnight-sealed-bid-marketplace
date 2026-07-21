@@ -47,7 +47,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
               initial={{ opacity: 0, x: 50, scale: 0.9 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 20, scale: 0.9 }}
-              className="pointer-events-auto glass-panel p-4 shadow-xl flex items-start"
+              className="pointer-events-auto bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl flex items-start"
             >
               <div className="flex-shrink-0 mr-3 mt-0.5">
                 {n.type === 'success' && <CheckCircle className="w-5 h-5 text-emerald-400" />}

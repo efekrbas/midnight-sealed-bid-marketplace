@@ -17,8 +17,9 @@ export async function POST(req: Request) {
     await fs.appendFile(feedbackFilePath, feedbackEntry, 'utf8');
 
     return NextResponse.json({ success: true, message: "Feedback saved!" });
-  } catch (error: any) {
-    console.error("Failed to save feedback:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    console.error('Feedback write error:', error);
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }

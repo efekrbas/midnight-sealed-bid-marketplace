@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Star, Send, CheckCircle2 } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 
 export default function FeedbackWidget() {
+  const { notify } = useNotification();
   const [isOpen, setIsOpen] = useState(false);
   const [type, setType] = useState<"Feature Request" | "Bug Report" | "General">("General");
   const [rating, setRating] = useState(0);
@@ -33,7 +35,7 @@ export default function FeedbackWidget() {
         }, 2000);
       } else {
         setStatus("idle");
-        alert("Failed to submit feedback.");
+        notify("Submission Failed", "Failed to submit feedback. Please try again.", "error");
       }
     } catch (err) {
       console.error(err);
@@ -55,12 +57,12 @@ export default function FeedbackWidget() {
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 w-80 glass-panel overflow-hidden z-50 shadow-2xl"
-          >
+            <motion.div 
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className="fixed bottom-24 right-6 w-80 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden z-50 shadow-2xl"
+            >
             <div className="bg-white/5 border-b border-white/10 p-4 flex justify-between items-center">
               <h3 className="font-semibold text-white">Send Feedback</h3>
               <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">

@@ -1,6 +1,11 @@
-export async function detectWallet(): Promise<any> {
+export interface MidnightWalletAPI {
+  enable?: () => Promise<unknown>;
+  [key: string]: unknown;
+}
+
+export async function detectWallet(): Promise<MidnightWalletAPI> {
   // Gracefully fallback or detect Lace, 1AM, or other compatible Midnight injected wallets
-  const midnightObj = (window as any).midnight;
+  const midnightObj = (window as unknown as { midnight?: Record<string, MidnightWalletAPI> }).midnight;
   if (!midnightObj) throw new Error('No Midnight wallet detected. Please install a compatible wallet.');
   
   const w = midnightObj.lace || midnightObj['1am'] || Object.values(midnightObj)[0];

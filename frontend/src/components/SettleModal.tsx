@@ -5,8 +5,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Gavel, X, CheckCircle2, Loader2, Key } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 
+interface AuctionItem {
+  id: string;
+  title: string;
+  image: string;
+  status: string;
+  highestBid: string;
+  endsIn: string;
+}
+
 interface SettleModalProps {
-  auction: any;
+  auction: AuctionItem;
   onClose: () => void;
 }
 
@@ -54,7 +63,7 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="glass-panel w-full max-w-md relative overflow-hidden"
+        className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-md relative overflow-hidden shadow-2xl"
       >
         <button 
           onClick={onClose}

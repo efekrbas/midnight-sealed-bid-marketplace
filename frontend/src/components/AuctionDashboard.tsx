@@ -18,8 +18,9 @@ interface AuctionItem {
 
 const mockAuctions: AuctionItem[] = [
   { id: '1', title: 'Rare Digital Art #102', image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop', status: 'Open', highestBid: '500 tNIGHT', endsIn: '02:14:30' },
-  { id: '2', title: 'Exclusive Preprod Access Key', image: 'https://images.unsplash.com/photo-1633398361682-386d755716d1?q=80&w=600&auto=format&fit=crop', status: 'Revealing', highestBid: '1200 tNIGHT', endsIn: 'Ended' },
+  { id: '2', title: 'Exclusive Preprod Access Key', image: 'https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?q=80&w=600&auto=format&fit=crop', status: 'Revealing', highestBid: '1200 tNIGHT', endsIn: 'Ended' },
   { id: '3', title: 'Genesis Block Token', image: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=600&auto=format&fit=crop', status: 'Ended', highestBid: '850 tNIGHT', endsIn: 'Ended' },
+  { id: '4', title: 'Midnight Founder Node License', image: 'https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=600&auto=format&fit=crop', status: 'Open', highestBid: '3500 tNIGHT', endsIn: '14:22:10' },
 ];
 
 const AuctionDashboard = React.memo(() => {
@@ -42,13 +43,6 @@ const AuctionDashboard = React.memo(() => {
         </div>
         
         <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
-          <button 
-            onClick={() => notify("Auction Ended", "The auction for 'Rare Digital Art #102' has concluded. You are the highest bidder!", "auction")}
-            className="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-full text-sm font-medium border border-purple-500/30 flex items-center mr-4"
-          >
-            <BellRing className="w-4 h-4 mr-2" /> Test Notification
-          </button>
-          
           {(['All', 'Open', 'Revealing', 'Ended'] as const).map(tab => (
             <button
               key={tab}
@@ -89,8 +83,15 @@ const AuctionDashboard = React.memo(() => {
                       <span className="glass-button px-4 py-2 rounded-lg font-medium text-amber-400 border-amber-400/50">Settle Auction</span>
                     </div>
                   )}
-                  <div className="h-48 overflow-hidden relative">
-                    <img src={auction.image} alt={auction.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="h-48 overflow-hidden relative bg-slate-800/50 flex items-center justify-center">
+                    <img 
+                      src={auction.image} 
+                      alt={auction.title} 
+                      onError={(e) => {
+                        e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Crect width='100%25' height='100%25' fill='%231e293b'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='14' font-weight='500' fill='%2364748b' text-anchor='middle' dominant-baseline='middle'%3EImage Not Found%3C/text%3E%3C/svg%3E";
+                      }}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                    />
                     <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium border border-white/10 flex items-center">
                       <span className={`w-2 h-2 rounded-full mr-2 ${
                         auction.status === 'Open' ? 'bg-emerald-400' : 
