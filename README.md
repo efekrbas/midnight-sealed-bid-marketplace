@@ -6,7 +6,7 @@ Welcome to the **Level 5 Implementation** of the Midnight Network Sealed-Bid Auc
 
 | Requirement | Deliverable Link | Description |
 |-------------|------------------|-------------|
-| **Live Demo** | [midnight-marketplace.vercel.app](https://example.com) | The live Next.js application connected to the Preprod network. |
+| **Live Demo** | [midnight-sealed-bid-marketplace.vercel.app](https://midnight-sealed-bid-marketplace.vercel.app) | The live Next.js application connected to the Preprod network. |
 | **Demo Video** | [docs/DEMO_VIDEO.md](docs/DEMO_VIDEO.md) | A 3-minute video script & outline demonstrating the full flow. |
 | **50+ Testers** | [users_preprod.json](users_preprod.json) | Exported JSON list of 50 verified wallet addresses that interacted with the dApp. |
 | **User Feedback** | [FEEDBACK.md](FEEDBACK.md) | Aggregated feedback, bug reports, and UX ratings from the 50 testers, including a prioritized backlog. |
