@@ -16,28 +16,28 @@ class TxResult {
 }
 
 export class Contract {
-  providers: any;
-  circuit: any;
+  providers: unknown;
+  circuit: unknown;
   
-  constructor(providers: any, circuit: any) {
+  constructor(providers: unknown, circuit: unknown) {
     this.providers = providers;
     this.circuit = circuit;
   }
 
   callTx = {
-    bid: async (auctionId: string, bidAmount: number, userAddress: string, userSecret: string) => {
+    bid: async (_auctionId: string, _bidAmount: number, _userAddress: string, _userSecret: string) => {
       await new Promise(r => setTimeout(r, 1500)); // Simulate prover delay
       return new TxResult();
     },
-    revealPrice: async (auctionId: string, reservePrice: number, organizerSecret: string) => {
+    revealPrice: async (_auctionId: string, _reservePrice: number, _organizerSecret: string) => {
       await new Promise(r => setTimeout(r, 2000));
       return new TxResult();
     },
-    claimItem: async (auctionId: string, userAddress: string, userSecret: string) => {
+    claimItem: async (_auctionId: string, _userAddress: string, _userSecret: string) => {
       await new Promise(r => setTimeout(r, 1500));
       return new TxResult();
     },
-    claimProceeds: async (auctionId: string, organizerAddress: string, organizerSecret: string) => {
+    claimProceeds: async (_auctionId: string, _organizerAddress: string, _organizerSecret: string) => {
       await new Promise(r => setTimeout(r, 1000));
       return new TxResult();
     }

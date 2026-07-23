@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wallet, KeySquare, ShieldCheck, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { detectWallet } from '@/lib/midnight';
@@ -8,7 +8,7 @@ import { detectWallet } from '@/lib/midnight';
 export default function OnboardingModal({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState(1);
   const [walletStatus, setWalletStatus] = useState<"idle" | "connecting" | "connected" | "error">("idle");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg] = useState("");
 
   const handleConnectWallet = async () => {
     try {

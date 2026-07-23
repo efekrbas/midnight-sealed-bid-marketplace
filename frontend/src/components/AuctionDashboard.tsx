@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Clock, Lock, ArrowUpRight, Filter, BellRing } from 'lucide-react';
+import { Clock, Lock, ArrowUpRight, Filter } from 'lucide-react';
 import BidModal from './BidModal';
 import SettleModal from './SettleModal';
 import { useNotification } from '@/context/NotificationContext';
@@ -27,7 +27,7 @@ const AuctionDashboard = React.memo(() => {
   const [activeTab, setActiveTab] = useState<AuctionStatus | 'All'>('All');
   const [selectedAuction, setSelectedAuction] = useState<AuctionItem | null>(null);
   const [settleAuction, setSettleAuction] = useState<AuctionItem | null>(null);
-  const { notify } = useNotification();
+
   
   // Performance optimization: Memoize the filtered array so it doesn't recalculate on every re-render
   const filteredAuctions = useMemo(() => {

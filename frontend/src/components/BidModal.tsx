@@ -63,7 +63,7 @@ export default function BidModal({ auction, onClose }: BidModalProps) {
       // Step 3: Submitting transaction to Midnight Preprod...
       setLoadingStep(3);
       const receipt = await tx.wait();
-      if ((receipt as any).status !== 'success') throw new Error("Transaction failed");
+      if ((receipt as { status: string }).status !== 'success') throw new Error("Transaction failed");
       
       // Step 4: Transaction Confirmed
       setLoadingStep(4);
