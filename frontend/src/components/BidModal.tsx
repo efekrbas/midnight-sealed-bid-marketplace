@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Lock, X, CheckCircle2, Loader2 } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
+import { Contract, marketplace } from '@/lib/contract';
 
 interface AuctionItem {
   id: string;
@@ -42,30 +43,27 @@ export default function BidModal({ auction, onClose }: BidModalProps) {
     try {
       // Step 1: Generating ZK Proof...
       setLoadingStep(1);
-      // Mock importing the compiled contract circuits (in a real app, this is passed via context)
-      // import { marketplace } from '../../contracts/src/managed/marketplace/contract';
-      // const contract = new Contract(providers, marketplace);
+      // In a real app, providers, userAddress, and userSecret are obtained from context
+      const providers = {}; 
+      const userAddress = "0x3f...9a2";
+      const userSecret = "0x...";
       
+      const contract = new Contract(providers, marketplace);
       const bidValue = Number(bidAmount);
-      await new Promise(r => setTimeout(r, 1000)); // Delay for UX
       
       // Step 2: Proving bid > current threshold...
       setLoadingStep(2);
-      // Mocking the call:
-      // const tx = await contract.callTx.bid(
-      //   auction.id, 
-      //   bidValue, 
-      //   userAddress, 
-      //   userSecret
-      // );
-      await new Promise(r => setTimeout(r, 1500)); // Simulate prover delay
+      const tx = await contract.callTx.bid(
+        auction.id, 
+        bidValue, 
+        userAddress, 
+        userSecret
+      );
       
       // Step 3: Submitting transaction to Midnight Preprod...
       setLoadingStep(3);
-      // Mocking the await tx inclusion:
-      // const receipt = await tx.wait();
-      // if (receipt.status !== 'success') throw new Error("Transaction failed");
-      await new Promise(r => setTimeout(r, 1500)); // Simulate network inclusion
+      const receipt = await tx.wait();
+      if ((receipt as any).status !== 'success') throw new Error("Transaction failed");
       
       // Step 4: Transaction Confirmed
       setLoadingStep(4);

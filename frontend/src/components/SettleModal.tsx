@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Gavel, X, CheckCircle2, Loader2, Key } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
+import { Contract, marketplace } from '@/lib/contract';
 
 interface AuctionItem {
   id: string;
@@ -38,38 +39,40 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
     try {
       // Step 1: Locating Winning Bidder Commitment...
       setLoadingStep(1);
-      // import { marketplace } from '../../contracts/src/managed/marketplace/contract';
-      // const contract = new Contract(providers, marketplace);
-      await new Promise(r => setTimeout(r, 1500));
+      const providers = {}; 
+      const userAddress = "0x3f...9a2";
+      const userSecret = "0x...";
+      const organizerSecret = "0x...";
+      const organizerAddress = "0x...";
+      
+      const contract = new Contract(providers, marketplace);
       
       // Step 2: Verifying ZK Proof of highest bid...
       setLoadingStep(2);
-      // const revealTx = await contract.callTx.revealPrice(
-      //   auction.id, 
-      //   auction.reservePrice, 
-      //   organizerSecret
-      // );
-      // await revealTx.wait();
-      await new Promise(r => setTimeout(r, 2000));
+      const revealTx = await contract.callTx.revealPrice(
+        auction.id, 
+        Number(auction.highestBid), // using highestBid as mocked reserve
+        organizerSecret
+      );
+      await revealTx.wait();
       
       // Step 3: Transferring asset ownership...
       setLoadingStep(3);
-      // const claimTx = await contract.callTx.claimItem(
-      //   auction.id, 
-      //   userAddress, 
-      //   userSecret
-      // );
-      // await claimTx.wait();
-      await new Promise(r => setTimeout(r, 1500));
+      const claimTx = await contract.callTx.claimItem(
+        auction.id, 
+        userAddress, 
+        userSecret
+      );
+      await claimTx.wait();
       
       // Step 4: Releasing tNIGHT to seller...
       setLoadingStep(4);
-      // const proceedsTx = await contract.callTx.claimProceeds(
-      //   auction.id, 
-      //   organizerAddress, 
-      //   organizerSecret
-      // );
-      // await proceedsTx.wait();
+      const proceedsTx = await contract.callTx.claimProceeds(
+        auction.id, 
+        organizerAddress, 
+        organizerSecret
+      );
+      await proceedsTx.wait();
       
       setStatus("success");
       notify("Auction Settled", `The winner has been verified for ${auction.title} and funds transferred via the smart contract.`, "success");
