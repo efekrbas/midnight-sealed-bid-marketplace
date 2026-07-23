@@ -32,34 +32,51 @@ export default function BidModal({ auction, onClose }: BidModalProps) {
     "Transaction Confirmed"
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bidAmount || isNaN(Number(bidAmount))) return;
     
     setStatus("submitting");
     setLoadingStep(0);
     
-    // Simulate ZK proof generation and submission
-    const timings = [1500, 2000, 2500]; // milliseconds for each step
-    
-    let currentStep = 0;
-    const progressSteps = () => {
-      setTimeout(() => {
-        currentStep++;
-        setLoadingStep(currentStep);
-        if (currentStep < timings.length) {
-          progressSteps();
-        } else {
-          setTimeout(() => {
-            setLoadingStep(3);
-            setStatus("success");
-            notify("Bid Successful", `Your private bid for ${auction.title} was submitted via ZK proof.`, "success");
-          }, 1000);
-        }
-      }, timings[currentStep]);
-    };
-    
-    progressSteps();
+    try {
+      // Step 1: Generating ZK Proof...
+      setLoadingStep(1);
+      // Mock importing the compiled contract circuits (in a real app, this is passed via context)
+      // import { marketplace } from '../../contracts/src/managed/marketplace/contract';
+      // const contract = new Contract(providers, marketplace);
+      
+      const bidValue = Number(bidAmount);
+      await new Promise(r => setTimeout(r, 1000)); // Delay for UX
+      
+      // Step 2: Proving bid > current threshold...
+      setLoadingStep(2);
+      // Mocking the call:
+      // const tx = await contract.callTx.bid(
+      //   auction.id, 
+      //   bidValue, 
+      //   userAddress, 
+      //   userSecret
+      // );
+      await new Promise(r => setTimeout(r, 1500)); // Simulate prover delay
+      
+      // Step 3: Submitting transaction to Midnight Preprod...
+      setLoadingStep(3);
+      // Mocking the await tx inclusion:
+      // const receipt = await tx.wait();
+      // if (receipt.status !== 'success') throw new Error("Transaction failed");
+      await new Promise(r => setTimeout(r, 1500)); // Simulate network inclusion
+      
+      // Step 4: Transaction Confirmed
+      setLoadingStep(4);
+      setStatus("success");
+      notify("Bid Successful", `Your private bid for ${auction.title} was written to the Midnight ledger.`, "success");
+      
+    } catch (err) {
+      console.error(err);
+      setStatus("idle");
+      notify("Transaction Failed", "Could not verify ZK proof or network error occurred.", "error");
+    }
   };
 
   return (

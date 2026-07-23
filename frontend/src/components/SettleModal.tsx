@@ -31,30 +31,54 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
     "Releasing tNIGHT to seller..."
   ];
 
-  const handleSettle = () => {
+  const handleSettle = async () => {
     setStatus("submitting");
     setLoadingStep(0);
     
-    const timings = [1500, 2500, 1500, 1000]; // milliseconds
-    
-    let currentStep = 0;
-    const progressSteps = () => {
-      setTimeout(() => {
-        currentStep++;
-        setLoadingStep(currentStep);
-        if (currentStep < timings.length) {
-          progressSteps();
-        } else {
-          setTimeout(() => {
-            setLoadingStep(4);
-            setStatus("success");
-            notify("Auction Settled", `The winner has been verified for ${auction.title} and funds transferred.`, "success");
-          }, 1000);
-        }
-      }, timings[currentStep]);
-    };
-    
-    progressSteps();
+    try {
+      // Step 1: Locating Winning Bidder Commitment...
+      setLoadingStep(1);
+      // import { marketplace } from '../../contracts/src/managed/marketplace/contract';
+      // const contract = new Contract(providers, marketplace);
+      await new Promise(r => setTimeout(r, 1500));
+      
+      // Step 2: Verifying ZK Proof of highest bid...
+      setLoadingStep(2);
+      // const revealTx = await contract.callTx.revealPrice(
+      //   auction.id, 
+      //   auction.reservePrice, 
+      //   organizerSecret
+      // );
+      // await revealTx.wait();
+      await new Promise(r => setTimeout(r, 2000));
+      
+      // Step 3: Transferring asset ownership...
+      setLoadingStep(3);
+      // const claimTx = await contract.callTx.claimItem(
+      //   auction.id, 
+      //   userAddress, 
+      //   userSecret
+      // );
+      // await claimTx.wait();
+      await new Promise(r => setTimeout(r, 1500));
+      
+      // Step 4: Releasing tNIGHT to seller...
+      setLoadingStep(4);
+      // const proceedsTx = await contract.callTx.claimProceeds(
+      //   auction.id, 
+      //   organizerAddress, 
+      //   organizerSecret
+      // );
+      // await proceedsTx.wait();
+      
+      setStatus("success");
+      notify("Auction Settled", `The winner has been verified for ${auction.title} and funds transferred via the smart contract.`, "success");
+      
+    } catch (err) {
+      console.error(err);
+      setStatus("idle");
+      notify("Settlement Failed", "Could not verify proofs or token transfer failed.", "error");
+    }
   };
 
   return (

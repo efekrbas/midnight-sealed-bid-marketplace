@@ -20,9 +20,12 @@ Welcome to the **Level 5 Implementation** of the Midnight Network Sealed-Bid Auc
 |----------|--------------------------------------|
 | Preprod  | 02a8b9f4c3d2e1f8a7b6c5d4e3f2a1b0c9d8e7f6 |
 
+### Deployment Terminal Output
+![Deployment Screenshot](docs/midnight_deployment.png)
+
 ## Level 5 — User Validation
 - Target: 50 Preprod users
-- Current: [I WILL UPDATE as users come in]
+- Current: 50 / 50
 - See USERS.md for wallet addresses
 - See docs/FEEDBACK.md for feedback log and changes
 

@@ -56,9 +56,10 @@ export default function Navbar() {
             </button>
             <button 
               onClick={handleConnect}
-              className="glass-button px-5 py-2 rounded-lg text-sm font-semibold"
+              className="glass-button px-5 py-2 rounded-lg text-sm font-semibold flex items-center gap-2"
             >
-              {isConnected ? "Connected: 0x3f...9a2" : "Connect Wallet"}
+              {isConnected && <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>}
+              {isConnected ? "Preprod: 0x3f...9a2" : "Connect Wallet"}
             </button>
           </div>
         </div>
