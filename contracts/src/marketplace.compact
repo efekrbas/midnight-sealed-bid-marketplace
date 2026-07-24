@@ -25,13 +25,14 @@ export ledger winnerClaimed: Map<Bytes<32>, Boolean>;
 
 // Creates a new auction. The auction is identified by `auctionId`.
 export circuit createAuction(
-    auctionId: Bytes<32>,
+    _auctionId: Bytes<32>,
     metadataUri: Bytes<32>,
     minPrice: Uint<32>,
     maxBidCount: Uint<16>,
     deadlineBlock: Uint<64>,
     _secret: Bytes<32>
 ): [] {
+    const auctionId = disclose(_auctionId);
     assert(!auctions.member(auctionId), "Auction already exists");
     assert(minPrice > 0, "Reserve price must be greater than zero");
     assert(maxBidCount > 0, "Max bids must be greater than zero");
@@ -52,9 +53,10 @@ export circuit createAuction(
 }
 
 // Bidders place bids on `auctionId`. Their identity is hidden.
-export circuit bid(auctionId: Bytes<32>, bidAmount: Uint<32>, _address: UserAddress, _secret: Bytes<32>): [] {
+export circuit bid(_auctionId: Bytes<32>, bidAmount: Uint<32>, _address: UserAddress, _secret: Bytes<32>): [] {
+    const auctionId = disclose(_auctionId);
     assert(auctions.member(auctionId), "Auction does not exist");
-    let auction = auctions.lookup(auctionId);
+    const auction = auctions.lookup(auctionId);
     
     assert(auction.state == AuctionState.OPEN, "Auction is not open");
     assert(auction.bidCount < auction.maxBids, "Bids are full");
@@ -73,36 +75,53 @@ export circuit bid(auctionId: Bytes<32>, bidAmount: Uint<32>, _address: UserAddr
     }
 
     bids.insert(bidKey, publicBid);
-    auction.bidCount = auction.bidCount + 1;
+    const newBidCount = (auction.bidCount + 1) as Uint<16>;
+    const isHigher = publicBid > auction.highestBid;
+    const newHighestBid = isHigher ? publicBid : auction.highestBid;
+    const isFull = newBidCount == auction.maxBids;
+    const newState = isFull ? AuctionState.CLOSED : auction.state;
 
-    if (publicBid > auction.highestBid) {
-        auction.highestBid = publicBid;
-    }
-
-    if (auction.bidCount == auction.maxBids) {
-        auction.state = AuctionState.CLOSED;
-    }
-    
-    auctions.insert(auctionId, auction);
+    auctions.insert(auctionId, Auction {
+        organizer: auction.organizer,
+        hiddenPrice: auction.hiddenPrice,
+        publicPrice: auction.publicPrice,
+        maxBids: auction.maxBids,
+        bidCount: newBidCount,
+        highestBid: newHighestBid,
+        state: newState,
+        metadataUri: auction.metadataUri,
+        deadlineBlock: auction.deadlineBlock
+    });
 }
 
 // Organizer can close the auction early.
-export circuit closeAuction(auctionId: Bytes<32>, _secret: Bytes<32>): [] {
+export circuit closeAuction(_auctionId: Bytes<32>, _secret: Bytes<32>): [] {
+    const auctionId = disclose(_auctionId);
     assert(auctions.member(auctionId), "Auction does not exist");
-    let auction = auctions.lookup(auctionId);
+    const auction = auctions.lookup(auctionId);
     
     const pubKey = getDappPublicKey(_secret);
     assert(auction.organizer == pubKey, "Only organizer can close");
     assert(auction.state == AuctionState.OPEN, "Auction already closed");
 
-    auction.state = AuctionState.CLOSED;
-    auctions.insert(auctionId, auction);
+    auctions.insert(auctionId, Auction {
+        organizer: auction.organizer,
+        hiddenPrice: auction.hiddenPrice,
+        publicPrice: auction.publicPrice,
+        maxBids: auction.maxBids,
+        bidCount: auction.bidCount,
+        highestBid: auction.highestBid,
+        state: AuctionState.CLOSED,
+        metadataUri: auction.metadataUri,
+        deadlineBlock: auction.deadlineBlock
+    });
 }
 
 // Organizer reveals the price to settle the auction.
-export circuit revealPrice(auctionId: Bytes<32>, minPrice: Uint<32>, _secret: Bytes<32>): [] {
+export circuit revealPrice(_auctionId: Bytes<32>, minPrice: Uint<32>, _secret: Bytes<32>): [] {
+    const auctionId = disclose(_auctionId);
     assert(auctions.member(auctionId), "Auction does not exist");
-    let auction = auctions.lookup(auctionId);
+    const auction = auctions.lookup(auctionId);
     
     const pubKey = getDappPublicKey(_secret);
     assert(auction.organizer == pubKey, "Only organizer can reveal");
@@ -111,15 +130,24 @@ export circuit revealPrice(auctionId: Bytes<32>, minPrice: Uint<32>, _secret: By
     const hashedPrice = commitPrice(minPrice as Bytes<32>, _secret);
     assert(hashedPrice == auction.hiddenPrice, "Price mismatch — cannot change reserve");
 
-    auction.publicPrice = disclose(minPrice);
-    auction.state = AuctionState.SETTLED;
-    auctions.insert(auctionId, auction);
+    auctions.insert(auctionId, Auction {
+        organizer: auction.organizer,
+        hiddenPrice: auction.hiddenPrice,
+        publicPrice: disclose(minPrice),
+        maxBids: auction.maxBids,
+        bidCount: auction.bidCount,
+        highestBid: auction.highestBid,
+        state: AuctionState.SETTLED,
+        metadataUri: auction.metadataUri,
+        deadlineBlock: auction.deadlineBlock
+    });
 }
 
 // The winner claims the item by paying the public price.
-export circuit claimItem(auctionId: Bytes<32>, _address: UserAddress, _secret: Bytes<32>): [] {
+export circuit claimItem(_auctionId: Bytes<32>, _address: UserAddress, _secret: Bytes<32>): [] {
+    const auctionId = disclose(_auctionId);
     assert(auctions.member(auctionId), "Auction does not exist");
-    let auction = auctions.lookup(auctionId);
+    const auction = auctions.lookup(auctionId);
     
     assert(auction.state == AuctionState.SETTLED, "Auction not settled");
     assert(auction.highestBid >= auction.publicPrice, "No valid winning bid");
@@ -137,9 +165,10 @@ export circuit claimItem(auctionId: Bytes<32>, _address: UserAddress, _secret: B
 }
 
 // The organizer claims the proceeds after the winner has claimed the item.
-export circuit claimProceeds(auctionId: Bytes<32>, _address: UserAddress, _secret: Bytes<32>): [] {
+export circuit claimProceeds(_auctionId: Bytes<32>, _address: UserAddress, _secret: Bytes<32>): [] {
+    const auctionId = disclose(_auctionId);
     assert(auctions.member(auctionId), "Auction does not exist");
-    let auction = auctions.lookup(auctionId);
+    const auction = auctions.lookup(auctionId);
     
     const pubKey = getDappPublicKey(_secret);
     assert(auction.organizer == pubKey, "Not organizer");

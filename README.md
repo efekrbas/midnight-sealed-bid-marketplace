@@ -15,7 +15,22 @@ Welcome to the **Level 5 Implementation** of the Midnight Network Sealed-Bid Auc
 
 ---
 
-## Contract Address
+## 🚀 Smart Contract Deployment (Midnight Preprod)
+
+The smart contract has been successfully compiled into Zero-Knowledge circuits (`k=14`, `8815 rows`) using the Midnight Compact Compiler. 
+
+The initial state and zero-knowledge proofs have been generated, and the contract has been deployed to the Midnight Preprod Network using the Midnight Node SDK and the Wallet Builder.
+
+### Deployment Details
+- **Network:** Midnight Preprod
+- **Wallet Address:** `0248326d28b1587b...8ff1ca`
+- **Contract Wrapper:** `src/managed/marketplace/contract/index.js` (118 KB)
+
+*(Aşağıdaki terminal çıktısı, kontratın ZK Proof üretimi ve ağa kazınması aşamasını gösterir)*
+
+![Midnight Preprod Deployment Screenshot](docs/deployment.png)
+
+## 🤝 Contribution
 | Network  | Address                              |
 |----------|--------------------------------------|
 | Preprod  | 02a8b9f4c3d2e1f8a7b6c5d4e3f2a1b0c9d8e7f6 |
