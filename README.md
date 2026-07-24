@@ -26,7 +26,7 @@ The initial state and zero-knowledge proofs have been generated, and the contrac
 - **Wallet Address:** `0248326d28b1587b...8ff1ca`
 - **Contract Wrapper:** `src/managed/marketplace/contract/index.js` (118 KB)
 
-*(Aşağıdaki terminal çıktısı, kontratın ZK Proof üretimi ve ağa kazınması aşamasını gösterir)*
+*(The terminal output below demonstrates the ZK Proof generation and contract deployment process on the network)*
 
 ![Midnight Preprod Deployment Screenshot](docs/deployment.png)
 
