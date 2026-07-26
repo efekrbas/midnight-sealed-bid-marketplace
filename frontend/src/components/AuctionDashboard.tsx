@@ -75,6 +75,7 @@ const formatTimeLeft = (totalSeconds: number): string => {
 };
 
 const AuctionDashboard = React.memo(() => {
+  const { notify } = useNotification();
   const [auctions, setAuctions] = useState<AuctionItem[]>(initialAuctions);
   const [activeTab, setActiveTab] = useState<AuctionStatus | 'All'>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -102,6 +103,22 @@ const AuctionDashboard = React.memo(() => {
       console.warn("Could not load custom auctions:", err);
     }
   }, []);
+
+  // Delete auction from state & localStorage
+  const handleDeleteAuction = (auctionId: string) => {
+    setAuctions(prev => prev.filter(a => a.id !== auctionId));
+    try {
+      const savedStr = localStorage.getItem('midnight_custom_auctions');
+      if (savedStr) {
+        const saved: AuctionItem[] = JSON.parse(savedStr);
+        const updated = saved.filter(a => a.id !== auctionId);
+        localStorage.setItem('midnight_custom_auctions', JSON.stringify(updated));
+      }
+    } catch (err) {
+      console.warn("Could not update localStorage:", err);
+    }
+    notify("Auction Removed", "The auction was removed from your marketplace dashboard.", "info");
+  };
 
   // Live ticking timer
   useEffect(() => {
@@ -460,6 +477,7 @@ const AuctionDashboard = React.memo(() => {
             onClose={() => setDetailedAuction(null)} 
             onPlaceBid={(a) => setSelectedAuction(a)}
             onSettle={(a) => setSettleAuction(a)}
+            onDelete={(id) => handleDeleteAuction(id)}
           />
         )}
       </AnimatePresence>

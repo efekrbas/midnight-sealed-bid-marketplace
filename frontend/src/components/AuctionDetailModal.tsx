@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShieldCheck, Clock, Lock, ArrowUpRight, CheckCircle2, User, FileCode, ArrowRight } from 'lucide-react';
+import { X, ShieldCheck, Clock, FileCode, ArrowRight, Trash2 } from 'lucide-react';
 
 export interface AuctionItem {
   id: string;
@@ -14,6 +14,7 @@ export interface AuctionItem {
   category: string;
   highestBidValue?: number;
   endsIn?: string;
+  isCustom?: boolean;
 }
 
 interface AuctionDetailModalProps {
@@ -21,6 +22,7 @@ interface AuctionDetailModalProps {
   onClose: () => void;
   onPlaceBid: (auction: any) => void;
   onSettle: (auction: any) => void;
+  onDelete?: (auctionId: string) => void;
 }
 
 export default function AuctionDetailModal({
@@ -28,6 +30,7 @@ export default function AuctionDetailModal({
   onClose,
   onPlaceBid,
   onSettle,
+  onDelete,
 }: AuctionDetailModalProps) {
   if (!auction) return null;
 
@@ -52,13 +55,27 @@ export default function AuctionDetailModal({
         >
           {/* Inner Core */}
           <div className="rounded-[calc(2rem-0.375rem)] bg-slate-900/95 p-6 sm:p-8 border border-white/10 relative overflow-hidden">
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute top-5 right-5 p-2 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors z-10"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            {/* Top Buttons: Delete & Close */}
+            <div className="absolute top-5 right-5 flex items-center space-x-2 z-10">
+              {onDelete && (
+                <button
+                  onClick={() => {
+                    onDelete(auction.id);
+                    onClose();
+                  }}
+                  title="Delete Auction"
+                  className="p-2 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:text-rose-200 hover:bg-rose-500/20 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                className="p-2 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
 
             {/* Asset Header & Image */}
             <div className="h-56 rounded-2xl overflow-hidden relative bg-slate-950 mb-6 border border-white/10">
@@ -129,7 +146,7 @@ export default function AuctionDetailModal({
               </button>
             )}
 
-            {auction.status === 'Revealing' && (
+            {(auction.status === 'Revealing' || auction.status === 'Ended') && (
               <button
                 onClick={() => {
                   onClose();
@@ -137,20 +154,7 @@ export default function AuctionDetailModal({
                 }}
                 className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg hover:shadow-amber-500/25 transition-all flex items-center justify-center space-x-2 group"
               >
-                <span>Verify & Reveal Commitments</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-            )}
-
-            {auction.status === 'Ended' && (
-              <button
-                onClick={() => {
-                  onClose();
-                  onSettle(auction);
-                }}
-                className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg hover:shadow-amber-500/25 transition-all flex items-center justify-center space-x-2 group"
-              >
-                <span>Settle Auction & Claim Asset</span>
+                <span>{auction.status === 'Revealing' ? 'Verify & Reveal Commitments' : 'Settle Auction & Claim Asset'}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             )}
