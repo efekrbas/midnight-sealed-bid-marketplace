@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Hexagon, ShieldCheck, ExternalLink, Cpu } from 'lucide-react';
+import { Hexagon, ExternalLink } from 'lucide-react';
 
 export default function Footer() {
   return (

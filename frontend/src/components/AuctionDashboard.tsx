@@ -2,25 +2,13 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, Lock, ArrowUpRight, Filter, Shield, Sparkles, CheckCircle2, Search, ArrowRight, ArrowUpDown, Eye } from 'lucide-react';
+import { Clock, Lock, ArrowUpRight, Filter, Shield, Sparkles, Search, ArrowUpDown, Eye } from 'lucide-react';
 import BidModal from './BidModal';
 import SettleModal from './SettleModal';
 import AuctionDetailModal from './AuctionDetailModal';
 import ZkProofDrawer from './ZkProofDrawer';
 import { useNotification } from '@/context/NotificationContext';
-
-type AuctionStatus = 'Open' | 'Revealing' | 'Ended';
-
-interface AuctionItem {
-  id: string;
-  title: string;
-  image: string;
-  status: AuctionStatus;
-  highestBid: string; // Public highest bid string
-  highestBidValue: number;
-  endsInSeconds: number; // Seconds left for live ticking
-  category: string;
-}
+import { AuctionItem, AuctionStatus } from '@/types/auction';
 
 const initialAuctions: AuctionItem[] = [
   { 
@@ -150,7 +138,7 @@ const AuctionDashboard = React.memo(() => {
         return matchesTab && matchesSearch;
       })
       .sort((a, b) => {
-        if (sortBy === 'highest') return b.highestBidValue - a.highestBidValue;
+        if (sortBy === 'highest') return (b.highestBidValue || 0) - (a.highestBidValue || 0);
         if (sortBy === 'title') return a.title.localeCompare(b.title);
         return a.endsInSeconds - b.endsInSeconds; // ending soonest
       });
@@ -227,7 +215,7 @@ const AuctionDashboard = React.memo(() => {
             <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as 'ending' | 'highest' | 'title')}
               className="bg-transparent text-white font-mono focus:outline-none cursor-pointer"
             >
               <option value="ending" className="bg-slate-900 text-white">Ending Soonest</option>

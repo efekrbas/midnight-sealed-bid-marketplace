@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { PlusCircle, Upload, Calendar, Lock, Shield, ArrowRight, Image as ImageIcon, CheckCircle2 } from 'lucide-react';
+import { Upload, Calendar, Lock, Shield, ArrowRight, Image as ImageIcon, CheckCircle2 } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 
 export default function CreateAuctionPage() {

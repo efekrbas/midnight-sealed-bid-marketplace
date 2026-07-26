@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Coins, Sparkles, CheckCircle2, ArrowRight, Wallet } from 'lucide-react';
+import { X, Coins, Sparkles, ArrowRight, Wallet } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 
 interface FaucetModalProps {

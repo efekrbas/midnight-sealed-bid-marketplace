@@ -5,15 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Gavel, X, CheckCircle2, Loader2, Key, ArrowRight } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import { Contract, marketplace } from '@/lib/contract';
-
-interface AuctionItem {
-  id: string;
-  title: string;
-  image: string;
-  status: string;
-  highestBid: string;
-  endsIn: string;
-}
+import { AuctionItem } from '@/types/auction';
 
 interface SettleModalProps {
   auction: AuctionItem;

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Hexagon, Shield, Cpu, Lock } from 'lucide-react';
+import { Hexagon, Shield } from 'lucide-react';
 
 export default function InitialSplashLoader() {
   const [loading, setLoading] = useState(true);

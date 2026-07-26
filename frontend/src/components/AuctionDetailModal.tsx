@@ -3,25 +3,13 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShieldCheck, Clock, FileCode, ArrowRight, Trash2 } from 'lucide-react';
-
-export interface AuctionItem {
-  id: string;
-  title: string;
-  image: string;
-  status: 'Open' | 'Revealing' | 'Ended';
-  highestBid: string;
-  endsInSeconds: number;
-  category: string;
-  highestBidValue?: number;
-  endsIn?: string;
-  isCustom?: boolean;
-}
+import { AuctionItem } from '@/types/auction';
 
 interface AuctionDetailModalProps {
   auction: AuctionItem | null;
   onClose: () => void;
-  onPlaceBid: (auction: any) => void;
-  onSettle: (auction: any) => void;
+  onPlaceBid: (auction: AuctionItem) => void;
+  onSettle: (auction: AuctionItem) => void;
   onDelete?: (auctionId: string) => void;
 }
 

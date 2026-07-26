@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       try {
         const tmpPath = path.join('/tmp', 'FEEDBACK.md');
         await fs.appendFile(tmpPath, feedbackEntry, 'utf8');
-      } catch (tmpErr) {
+      } catch {
         console.log('Feedback recorded in serverless logs:', timestamp, type, rating, text);
       }
     }
