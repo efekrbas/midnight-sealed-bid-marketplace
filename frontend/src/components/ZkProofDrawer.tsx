@@ -150,12 +150,12 @@ export default function ZkProofDrawer({ isOpen, onClose, bidData }: ZkProofDrawe
             {/* Footer Actions */}
             <div className="pt-6 border-t border-white/10 space-y-3">
               <a
-                href="https://preprod.midnight.network"
+                href="https://midnight.network"
                 target="_blank"
                 rel="noreferrer"
                 className="w-full py-3 rounded-full bg-purple-600/20 hover:bg-purple-600/30 text-purple-200 border border-purple-500/30 font-bold text-xs flex items-center justify-center space-x-2 transition-colors"
               >
-                <span>View on Midnight Explorer</span>
+                <span>View on Midnight Network ↗</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
 
