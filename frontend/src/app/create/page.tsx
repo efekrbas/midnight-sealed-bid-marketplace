@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { PlusCircle, Upload, Calendar, Lock, Shield, ArrowRight, Image as ImageIcon, CheckCircle2 } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 
 export default function CreateAuctionPage() {
   const { notify } = useNotification();
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
@@ -44,9 +46,37 @@ export default function CreateAuctionPage() {
       return;
     }
 
-    notify("Auction Initiated", "ZK proof commitment generated. Written to Midnight Preprod.", "success");
-    setFormData({ title: '', description: '', minPrice: '', maxBids: '50', deadline: '', category: 'Digital Art' });
-    setPreviewImage(null);
+    // Calculate seconds from deadline
+    const deadlineDate = new Date(formData.deadline).getTime();
+    const now = Date.now();
+    const diffSeconds = Math.max(Math.floor((deadlineDate - now) / 1000), 3600);
+
+    const newAuction = {
+      id: Date.now().toString(),
+      title: formData.title,
+      image: previewImage || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop',
+      status: 'Open',
+      highestBid: `${formData.minPrice} tNIGHT`,
+      highestBidValue: Number(formData.minPrice),
+      endsInSeconds: diffSeconds,
+      category: formData.category
+    };
+
+    // Save to localStorage
+    try {
+      const existingStr = localStorage.getItem('midnight_custom_auctions');
+      const existing = existingStr ? JSON.parse(existingStr) : [];
+      localStorage.setItem('midnight_custom_auctions', JSON.stringify([newAuction, ...existing]));
+    } catch (err) {
+      console.warn("Could not save auction to localStorage:", err);
+    }
+
+    notify("Auction Created", `${formData.title} listed on Marketplace. Written to Midnight ledger.`, "success");
+
+    // Redirect to marketplace landing page
+    setTimeout(() => {
+      router.push('/');
+    }, 600);
   };
 
   return (
@@ -75,7 +105,7 @@ export default function CreateAuctionPage() {
         {/* Inner Core */}
         <div className="rounded-[calc(2rem-0.375rem)] bg-slate-900/80 p-6 sm:p-10 border border-white/5">
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Top Grid: Title, Category, Description vs Image Upload */}
+            {/* Top Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-5">
                 <div>

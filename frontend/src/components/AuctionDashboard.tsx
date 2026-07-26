@@ -84,6 +84,25 @@ const AuctionDashboard = React.memo(() => {
   const [detailedAuction, setDetailedAuction] = useState<AuctionItem | null>(null);
   const [selectedProofBid, setSelectedProofBid] = useState<{ id: string; auctionTitle: string; bidCommitment: string; nullifierHash: string; proofType: string; blockHeight: number; timestamp: string } | null>(null);
 
+  // Load user created auctions from localStorage
+  useEffect(() => {
+    try {
+      const savedStr = localStorage.getItem('midnight_custom_auctions');
+      if (savedStr) {
+        const saved: AuctionItem[] = JSON.parse(savedStr);
+        if (saved && saved.length > 0) {
+          setAuctions(prev => {
+            const existingIds = new Set(prev.map(a => a.id));
+            const uniqueNew = saved.filter(a => !existingIds.has(a.id));
+            return [...uniqueNew, ...prev];
+          });
+        }
+      }
+    } catch (err) {
+      console.warn("Could not load custom auctions:", err);
+    }
+  }, []);
+
   // Live ticking timer
   useEffect(() => {
     const timer = setInterval(() => {
