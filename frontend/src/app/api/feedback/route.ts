@@ -7,19 +7,36 @@ export async function POST(req: Request) {
     const data = await req.json();
     const { type, rating, text } = data;
 
-    const feedbackEntry = `\n## Feedback Entry - ${new Date().toISOString()}\n- **Type:** ${type}\n- **Rating:** ${rating} Stars\n- **Details:** ${text}\n`;
+    if (!text || !rating) {
+      return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
+    }
 
-    // Write to the root project folder (two levels up from frontend)
-    // Wait, __dirname in Next.js might be inside .next/server. Using path.resolve is better.
-    const rootPath = path.resolve(process.cwd(), '..');
-    const feedbackFilePath = path.join(rootPath, 'FEEDBACK.md');
+    const timestamp = new Date().toISOString();
+    const feedbackEntry = `\n## Feedback Entry - ${timestamp}\n- **Type:** ${type}\n- **Rating:** ${rating} Stars\n- **Details:** ${text}\n`;
 
-    await fs.appendFile(feedbackFilePath, feedbackEntry, 'utf8');
+    // Attempt writing to local filesystem (works in local dev)
+    try {
+      const rootPath = path.resolve(process.cwd(), '..');
+      const feedbackFilePath = path.join(rootPath, 'FEEDBACK.md');
+      await fs.appendFile(feedbackFilePath, feedbackEntry, 'utf8');
+    } catch (fsErr) {
+      // Vercel serverless functions have a read-only filesystem (except /tmp)
+      console.log('Serverless read-only environment detected. Falling back to /tmp:', fsErr);
+      try {
+        const tmpPath = path.join('/tmp', 'FEEDBACK.md');
+        await fs.appendFile(tmpPath, feedbackEntry, 'utf8');
+      } catch (tmpErr) {
+        console.log('Feedback recorded in serverless logs:', timestamp, type, rating, text);
+      }
+    }
 
-    return NextResponse.json({ success: true, message: "Feedback saved!" });
+    return NextResponse.json({ 
+      success: true, 
+      message: "Feedback recorded successfully!",
+      data: { type, rating, text, timestamp }
+    });
   } catch (error: unknown) {
-    console.error('Feedback write error:', error);
-    const msg = error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json({ success: false, error: msg }, { status: 500 });
+    console.error('Feedback API error:', error);
+    return NextResponse.json({ success: false, error: "Failed to process feedback" }, { status: 500 });
   }
 }
