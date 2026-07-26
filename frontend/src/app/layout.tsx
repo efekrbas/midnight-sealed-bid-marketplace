@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import FeedbackWidget from "@/components/FeedbackWidget";
 import { NotificationProvider } from "@/context/NotificationContext";
 
@@ -20,13 +21,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} antialiased text-slate-100 bg-slate-950`}>
+      <body className={`${inter.className} antialiased text-slate-100 bg-slate-950 flex flex-col min-h-screen justify-between`}>
         <NotificationProvider>
-          <Navbar />
-          {children}
+          <div>
+            <Navbar />
+            {children}
+          </div>
+          <Footer />
           <FeedbackWidget />
         </NotificationProvider>
       </body>
     </html>
   );
 }
+

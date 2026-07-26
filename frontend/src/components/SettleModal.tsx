@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gavel, X, CheckCircle2, Loader2, Key } from 'lucide-react';
+import { Gavel, X, CheckCircle2, Loader2, Key, ArrowRight } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import { Contract, marketplace } from '@/lib/contract';
 
@@ -51,7 +51,7 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
       setLoadingStep(2);
       const revealTx = await contract.callTx.revealPrice(
         auction.id, 
-        Number(auction.highestBid), // using highestBid as mocked reserve
+        Number(auction.highestBid),
         organizerSecret
       );
       await revealTx.wait();
@@ -85,30 +85,42 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xl">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-md relative overflow-hidden shadow-2xl"
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+        transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+        /* Doppelrand Outer Shell */
+        className="p-1.5 rounded-[2rem] bg-white/[0.03] ring-1 ring-white/15 shadow-[0_0_50px_rgba(0,0,0,0.8)] w-full max-w-md relative overflow-hidden"
       >
-        <button 
-          onClick={onClose}
-          disabled={status === "submitting"}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white disabled:opacity-50"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {/* Inner Core */}
+        <div className="rounded-[calc(2rem-0.375rem)] bg-slate-900/95 p-6 sm:p-8 border border-white/10 relative overflow-hidden">
+          {/* Subtle Ambient Radial Orb */}
+          <div className="absolute -top-20 -right-20 w-48 h-48 bg-amber-500/15 rounded-full blur-[60px] pointer-events-none" />
 
-        <div className="p-8">
+          <button 
+            onClick={onClose}
+            disabled={status === "submitting"}
+            className="absolute top-5 right-5 p-2 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 disabled:opacity-50 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+
           <div className="flex items-center mb-6">
-            <Gavel className="w-6 h-6 text-amber-400 mr-3" />
-            <h2 className="text-2xl font-bold">Settle Auction</h2>
+            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 mr-3">
+              <Gavel className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Settle Auction</h2>
+              <p className="text-xs text-slate-400 font-mono mt-0.5">Trustless Contract Reveal</p>
+            </div>
           </div>
           
-          <p className="text-gray-300 text-sm mb-6">
-            Finalize: <span className="text-white font-semibold">{auction.title}</span>
-          </p>
+          <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5 mb-6 flex items-center justify-between">
+            <span className="text-xs text-slate-400">Target Asset:</span>
+            <span className="text-xs font-bold text-white truncate max-w-[200px]">{auction.title}</span>
+          </div>
 
           <AnimatePresence mode="wait">
             {status === "idle" && (
@@ -119,24 +131,30 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <div className="bg-amber-900/20 border border-amber-500/30 p-4 rounded-lg flex items-start">
-                  <Key className="w-5 h-5 text-amber-400 mr-3 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-200/80">
-                    Settlement crosses the privacy boundary. The contract will evaluate all ZK commitments, verify the highest bid against the reserve price, and execute the final unshielded token transfers.
+                <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl flex items-start space-x-3">
+                  <Key className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-amber-200/90 leading-relaxed">
+                    The contract will evaluate all ZK commitments, verify the highest valid bid against reserve, and execute the final token payout.
                   </p>
                 </div>
 
-                <div className="flex justify-between items-center py-3 border-b border-white/10">
-                  <span className="text-sm text-gray-400">Current Status</span>
-                  <span className="text-sm font-semibold text-pink-400">Ended</span>
-                </div>
-                <div className="flex justify-between items-center py-3 border-b border-white/10">
-                  <span className="text-sm text-gray-400">Highest Public Bid</span>
-                  <span className="text-sm font-mono text-white">{auction.highestBid}</span>
+                <div className="space-y-2 py-2">
+                  <div className="flex justify-between items-center py-2.5 border-b border-white/5 text-xs">
+                    <span className="text-slate-400">Current Status</span>
+                    <span className="font-semibold text-rose-400 font-mono">Ended</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2.5 border-b border-white/5 text-xs">
+                    <span className="text-slate-400">Highest Public Reserve</span>
+                    <span className="font-mono font-bold text-white">{auction.highestBid}</span>
+                  </div>
                 </div>
 
-                <button onClick={handleSettle} className="glass-button w-full py-3 rounded-lg font-medium text-amber-400 border-amber-400/50 flex justify-center items-center hover:bg-amber-400/10 transition-colors">
-                  Trigger Settlement
+                <button 
+                  onClick={handleSettle} 
+                  className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg hover:shadow-amber-500/25 transition-all flex items-center justify-center space-x-2 group"
+                >
+                  <span>Execute Smart Settlement</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </motion.div>
             )}
@@ -147,26 +165,32 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0 }}
-                className="py-8"
+                className="py-4"
               >
-                <div className="space-y-6">
+                <div className="space-y-5">
                   {steps.map((stepText, idx) => {
                     const isCompleted = loadingStep > idx;
                     const isActive = loadingStep === idx;
                     const isPending = loadingStep < idx;
 
                     return (
-                      <div key={idx} className={`flex items-center transition-all duration-300 ${isPending ? 'opacity-30' : 'opacity-100'}`}>
-                        <div className="w-8 flex justify-center mr-3">
+                      <div key={idx} className={`flex items-center space-x-3.5 transition-all duration-300 ${isPending ? 'opacity-30' : 'opacity-100'}`}>
+                        <div className="flex-shrink-0">
                           {isCompleted ? (
-                            <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                            <div className="w-7 h-7 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center">
+                              <CheckCircle2 className="w-4 h-4" />
+                            </div>
                           ) : isActive ? (
-                            <Loader2 className="w-6 h-6 text-amber-400 animate-spin" />
+                            <div className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center">
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            </div>
                           ) : (
-                            <div className="w-2 h-2 rounded-full bg-gray-500" />
+                            <div className="w-7 h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                              <div className="w-2 h-2 rounded-full bg-slate-500" />
+                            </div>
                           )}
                         </div>
-                        <span className={`text-sm ${isActive ? 'text-white font-medium' : isCompleted ? 'text-gray-300' : 'text-gray-500'}`}>
+                        <span className={`text-xs font-mono ${isActive ? 'text-white font-bold' : isCompleted ? 'text-slate-300' : 'text-slate-500'}`}>
                           {stepText}
                         </span>
                       </div>
@@ -181,16 +205,19 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
                 key="success"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="py-8 text-center"
+                className="py-6 text-center"
               >
-                <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-400">
-                  <CheckCircle2 className="w-10 h-10" />
+                <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-400">
+                  <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Auction Settled</h3>
-                <p className="text-gray-400 text-sm mb-8">
-                  The zero-knowledge proofs have been verified and ownership transferred.
+                <h3 className="text-lg font-bold text-white mb-1">Auction Settled!</h3>
+                <p className="text-slate-400 text-xs mb-6">
+                  Zero-knowledge proofs verified and asset transferred on-chain.
                 </p>
-                <button onClick={onClose} className="glass-button w-full py-3 rounded-lg font-medium">
+                <button 
+                  onClick={onClose} 
+                  className="w-full py-3 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-xs border border-white/15 transition-colors"
+                >
                   Close
                 </button>
               </motion.div>
