@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Download, Activity, CheckCircle2, Shield, Search, ArrowUpRight } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
 
 interface Tester {
   id: number;
@@ -25,6 +26,7 @@ const generateStableTesters = (): Tester[] => {
 };
 
 export default function AnalyticsPage() {
+  const { notify } = useNotification();
   const testers = useMemo(() => generateStableTesters(), []);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -164,9 +166,18 @@ export default function AnalyticsPage() {
                 {filteredTesters.map((tester) => (
                   <tr key={tester.id} className="hover:bg-white/[0.03] transition-colors">
                     <td className="px-6 py-4 font-bold text-slate-300">#{tester.id}</td>
-                    <td className="px-6 py-4 text-purple-300 flex items-center space-x-1">
-                      <span>{tester.address}</span>
-                      <ArrowUpRight className="w-3 h-3 text-slate-500" />
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(tester.address);
+                          notify("Copied", `Wallet address ${tester.address} copied to clipboard.`, "info");
+                        }}
+                        className="text-purple-300 hover:text-purple-200 flex items-center space-x-1 transition-colors group cursor-pointer"
+                        title="Click to copy address"
+                      >
+                        <span className="group-hover:underline">{tester.address}</span>
+                        <ArrowUpRight className="w-3 h-3 text-slate-500 group-hover:text-purple-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      </button>
                     </td>
                     <td className="px-6 py-4 text-slate-400">{tester.joinDate}</td>
                     <td className="px-6 py-4">
