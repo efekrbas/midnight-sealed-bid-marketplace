@@ -1,5 +1,7 @@
 # Level 5 Midnight Sealed-Bid Marketplace 🦉🌙
 
+This project is built on the Midnight Network.
+
 Welcome to the **Level 5 Implementation** of the Midnight Network Sealed-Bid Auction. This project demonstrates a production-ready, fully decentralized marketplace where digital assets can be listed and bid upon in total privacy using Midnight's native Zero-Knowledge (ZK) circuits.
 
 ## 🏆 Level 5 Deliverables
