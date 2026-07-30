@@ -9,7 +9,7 @@ Welcome to the **Level 5 Implementation** of the Midnight Network Sealed-Bid Auc
 | Requirement | Deliverable Link | Description |
 |-------------|------------------|-------------|
 | **Live Demo** | [midnight-sealed-bid-marketplace.vercel.app](https://midnight-sealed-bid-marketplace.vercel.app) | The live Next.js application connected to the Preprod network. |
-| **Demo Video** | [YouTube Video](https://youtu.be/bru2b2mIygE?si=7uZgmcK760FcnGyG) | A 3-minute video demonstrating the full flow. |
+| **Demo Video** | [YouTube Video](https://youtu.be/XbhG_dkSAh8?si=90nIg4zzEzbvKfja) | A 3-minute video demonstrating the full flow. |
 | **50+ Testers** | [users_preprod.json](users_preprod.json) | Exported JSON list of 50 verified wallet addresses that interacted with the dApp. |
 | **User Feedback** | [docs/FEEDBACK.md](docs/FEEDBACK.md) | Aggregated feedback, bug reports, and UX ratings. |
 | **Architecture** | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Detailed Mermaid.js diagrams showing the ZK privacy boundary and settlement flow. |
