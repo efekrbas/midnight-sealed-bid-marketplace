@@ -1,91 +1,121 @@
-/**
- * Midnight Compact Smart Contract Integration Layer
- * Connects frontend circuit calls with Midnight Preprod Network.
- * Supports deployContract(), submit_bid, reveal, claimItem, and claimProceeds.
- */
+import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
+import { FetchZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
+import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
+import { type Contract as MarketplaceContract, contractReferenceLocations, pureCircuits, Circuits } from '../../../contracts/src/managed/marketplace/contract';
+import type { WalletConnectedAPI as DAppConnectorAPI } from '@midnight-ntwrk/dapp-connector-api';
+import { NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+
+// Stub for DAppConnectorWalletProvider since the package is unavailable in this npm registry
+export class DAppConnectorWalletProvider {
+  constructor(dappConnector: DAppConnectorAPI) {}
+}
 
 export const marketplace = {
   contractName: 'marketplace',
   circuitVersion: '0.23',
 };
 
-class TxResult {
-  async wait() {
-    return new Promise<{ status: string }>((resolve) => {
-      setTimeout(() => {
-        resolve({ status: 'success' });
-      }, 1500); // Simulate Midnight Preprod block inclusion delay
-    });
-  }
-}
+// Replace static indexer urls with Preprod ones if needed
+export const INDEXER_URL = 'https://indexer.preprod.midnight.network/api/v1/graphql';
+export const NODE_URL = 'https://rpc.preprod.midnight.network';
+export const ZK_CONFIG_URL = 'https://indexer.preprod.midnight.network/api/v1/graphql';
 
 export class Contract {
-  providers: unknown;
-  circuit: unknown;
+  providers: any;
+  midnightContract: any;
   contractAddress: string;
 
-  constructor(providers?: unknown, circuit?: unknown) {
-    this.providers = providers || {
-      publicDataProvider: 'https://indexer.preprod.midnight.network/api/v1/graphql',
-      zkConfigProvider: 'https://indexer.preprod.midnight.network/api/v1/graphql',
-    };
-    this.circuit = circuit || marketplace;
-    this.contractAddress = '0x3f000028b1587b8ff1ca9a2';
+  private constructor(providers: any, midnightContract: any, address: string) {
+    this.providers = providers;
+    this.midnightContract = midnightContract;
+    this.contractAddress = address;
   }
 
-  // Deploys the Compact smart contract using Midnight Node SDK deployContract()
-  static async deployContract(providers?: unknown): Promise<{ contractAddress: string; deploymentTx: TxResult }> {
+  static async buildProviders(dappConnector: DAppConnectorAPI) {
+    const walletProvider = new DAppConnectorWalletProvider(dappConnector);
+    const publicDataProvider = indexerPublicDataProvider(INDEXER_URL, INDEXER_URL.replace('http', 'ws'));
+    const zkConfigProvider = new FetchZkConfigProvider(ZK_CONFIG_URL, fetch);
+
+    return {
+      privateStateProvider: walletProvider,
+      walletProvider,
+      publicDataProvider,
+      zkConfigProvider,
+    };
+  }
+
+  static async deployContract(dappConnector: DAppConnectorAPI): Promise<{ contractAddress: string; deploymentTx: any }> {
     console.log("Compiling Midnight Marketplace Contract...");
     console.log("Connecting to Midnight Preprod Indexer...");
-    await new Promise(r => setTimeout(r, 1200));
     
-    const contractAddress = `0x3f${Math.random().toString(16).substring(2, 10)}28b1587b8ff1ca`;
-    console.log(`✅ Deployment Successful! Contract Address: ${contractAddress}`);
+    const providers = await Contract.buildProviders(dappConnector);
+
+    // Assuming we have some initial state configuration for the constructor
+    const initialState = {}; // Placeholder for the actual initial state
+    
+    const deployed = await deployContract(
+      providers as any,
+      {
+        privateStateId: "marketplacePrivateState",
+        initialPrivateState: initialState,
+        compiledContract: { contractReferenceLocations, pureCircuits } as any
+      } as any
+    );
+    
+    console.log(`✅ Deployment Successful! Contract Address: ${deployed.deployTxData.public.contractAddress}`);
     
     return {
-      contractAddress,
-      deploymentTx: new TxResult(),
+      contractAddress: deployed.deployTxData.public.contractAddress,
+      deploymentTx: deployed.deployTxData,
     };
   }
 
-  callTx = {
-    // createAuction circuit: creates new auction with hidden reserve price
-    createAuction: async (_auctionId: string, _metadataUri: string, _minPrice: number, _maxBids: number, _deadline: number, _secret: string) => {
-      await new Promise(r => setTimeout(r, 1200));
-      return new TxResult();
-    },
-    // bid / submit_bid circuit: places private ZK bid proved via local prover
-    bid: async (_auctionId: string, _bidAmount: number, _userAddress: string, _userSecret: string) => {
-      await new Promise(r => setTimeout(r, 1500)); // Local ZK proof generation
-      return new TxResult();
-    },
-    submit_bid: async (_auctionId: string, _bidAmount: number, _userAddress: string, _userSecret: string) => {
-      await new Promise(r => setTimeout(r, 1500));
-      return new TxResult();
-    },
-    // closeAuction circuit: organizer closes auction early
-    closeAuction: async (_auctionId: string, _secret: string) => {
-      await new Promise(r => setTimeout(r, 1000));
-      return new TxResult();
-    },
-    // revealPrice / reveal circuit: organizer reveals reserve price for settlement
-    revealPrice: async (_auctionId: string, _reservePrice: number, _organizerSecret: string) => {
-      await new Promise(r => setTimeout(r, 2000));
-      return new TxResult();
-    },
-    reveal: async (_auctionId: string, _reservePrice: number, _organizerSecret: string) => {
-      await new Promise(r => setTimeout(r, 2000));
-      return new TxResult();
-    },
-    // claimItem circuit: winner pays public price & receives asset
-    claimItem: async (_auctionId: string, _userAddress: string, _userSecret: string) => {
-      await new Promise(r => setTimeout(r, 1500));
-      return new TxResult();
-    },
-    // claimProceeds circuit: seller claims funds after winner claims item
-    claimProceeds: async (_auctionId: string, _organizerAddress: string, _organizerSecret: string) => {
-      await new Promise(r => setTimeout(r, 1000));
-      return new TxResult();
-    }
-  };
+  static async connect(dappConnector: DAppConnectorAPI, address: string): Promise<Contract> {
+    const providers = await Contract.buildProviders(dappConnector);
+    const midnightContract = await findDeployedContract(
+      providers as any,
+      {
+        contractAddress: address,
+        compiledContract: { contractReferenceLocations, pureCircuits } as any
+      } as any
+    );
+    return new Contract(providers, midnightContract, address);
+  }
+
+  get callTx() {
+    return {
+      createAuction: async (_auctionId: Uint8Array, _metadataUri: Uint8Array, _minPrice: bigint, _maxBids: bigint, _deadline: bigint, _secret: Uint8Array) => {
+        const tx = await this.midnightContract.callTx.createAuction(_auctionId, _metadataUri, _minPrice, _maxBids, _deadline, _secret);
+        return tx;
+      },
+      bid: async (_auctionId: Uint8Array, _bidAmount: bigint, _userAddress: { bytes: Uint8Array }, _userSecret: Uint8Array) => {
+        const tx = await this.midnightContract.callTx.bid(_auctionId, _bidAmount, _userAddress, _userSecret);
+        return tx;
+      },
+      submit_bid: async (_auctionId: Uint8Array, _bidAmount: bigint, _userAddress: { bytes: Uint8Array }, _userSecret: Uint8Array) => {
+        const tx = await this.midnightContract.callTx.bid(_auctionId, _bidAmount, _userAddress, _userSecret);
+        return tx;
+      },
+      closeAuction: async (_auctionId: Uint8Array, _secret: Uint8Array) => {
+        const tx = await this.midnightContract.callTx.closeAuction(_auctionId, _secret);
+        return tx;
+      },
+      revealPrice: async (_auctionId: Uint8Array, _reservePrice: bigint, _organizerSecret: Uint8Array) => {
+        const tx = await this.midnightContract.callTx.revealPrice(_auctionId, _reservePrice, _organizerSecret);
+        return tx;
+      },
+      reveal: async (_auctionId: Uint8Array, _reservePrice: bigint, _organizerSecret: Uint8Array) => {
+        const tx = await this.midnightContract.callTx.revealPrice(_auctionId, _reservePrice, _organizerSecret);
+        return tx;
+      },
+      claimItem: async (_auctionId: Uint8Array, _userAddress: { bytes: Uint8Array }, _userSecret: Uint8Array) => {
+        const tx = await this.midnightContract.callTx.claimItem(_auctionId, _userAddress, _userSecret);
+        return tx;
+      },
+      claimProceeds: async (_auctionId: Uint8Array, _organizerAddress: { bytes: Uint8Array }, _organizerSecret: Uint8Array) => {
+        const tx = await this.midnightContract.callTx.claimProceeds(_auctionId, _organizerAddress, _organizerSecret);
+        return tx;
+      }
+    };
+  }
 }

@@ -32,16 +32,14 @@ The initial state and zero-knowledge proofs have been generated, and the contrac
 
 ![Midnight Preprod Deployment Screenshot](docs/deployment.png)
 
-## 🤝 Contribution
+## Contract Address
 | Network  | Address                              |
 |----------|--------------------------------------|
-| Preprod  | 02a8b9f4c3d2e1f8a7b6c5d4e3f2a1b0c9d8e7f6 |
-
-
+| Preprod  | [PASTE CONTRACT ADDRESS]             |
 
 ## Level 5 — User Validation
 - Target: 50 Preprod users
-- Current: 50 / 50
+- Current: [I WILL UPDATE as users come in]
 - See USERS.md for wallet addresses
 - See docs/FEEDBACK.md for feedback log and changes
 

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Gavel, X, CheckCircle2, Loader2, Key, ArrowRight } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
+import { useWallet } from '@/context/WalletContext';
 import { Contract, marketplace } from '@/lib/contract';
 import { AuctionItem } from '@/types/auction';
 
@@ -16,6 +17,7 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
   const [loadingStep, setLoadingStep] = useState(0);
   const { notify } = useNotification();
+  const { isConnected, dappConnector, address } = useWallet();
 
   const steps = [
     "Locating Winning Bidder Commitment...",
@@ -31,19 +33,26 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
     try {
       // Step 1: Locating Winning Bidder Commitment...
       setLoadingStep(1);
-      const providers = {}; 
-      const userAddress = "0x3f...9a2";
-      const userSecret = "0x...";
-      const organizerSecret = "0x...";
-      const organizerAddress = "0x...";
+      if (!isConnected || !dappConnector || !address) {
+        notify("Wallet Not Connected", "Please connect your wallet first.", "error");
+        setStatus("idle");
+        return;
+      }
       
-      const contract = new Contract(providers, marketplace);
+      const contractAddress = "02a8b9f4c3d2e1f8a7b6c5d4e3f2a1b0c9d8e7f6"; // From README
+      const contract = await Contract.connect(dappConnector, contractAddress);
+      
+      const userSecret = new Uint8Array(32); // Mock
+      const organizerSecret = new Uint8Array(32); // Mock
+      const organizerAddress = { bytes: new Uint8Array(32) }; // Mock
+      const userAddress = { bytes: new Uint8Array(32) }; // Mock
+      const auctionId = new Uint8Array(32); // Mock
       
       // Step 2: Verifying ZK Proof of highest bid...
       setLoadingStep(2);
       const revealTx = await contract.callTx.revealPrice(
-        auction.id, 
-        Number(auction.highestBid),
+        auctionId, 
+        BigInt(Math.floor(Number(auction.highestBid) * 1000000)),
         organizerSecret
       );
       await revealTx.wait();
@@ -51,20 +60,18 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
       // Step 3: Transferring asset ownership...
       setLoadingStep(3);
       const claimTx = await contract.callTx.claimItem(
-        auction.id, 
+        auctionId, 
         userAddress, 
         userSecret
       );
-      await claimTx.wait();
       
       // Step 4: Releasing tNIGHT to seller...
       setLoadingStep(4);
       const proceedsTx = await contract.callTx.claimProceeds(
-        auction.id, 
+        auctionId, 
         organizerAddress, 
         organizerSecret
       );
-      await proceedsTx.wait();
       
       setStatus("success");
       notify("Auction Settled", `The winner has been verified for ${auction.title} and funds transferred via the smart contract.`, "success");

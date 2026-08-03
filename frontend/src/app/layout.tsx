@@ -13,6 +13,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FeedbackWidget from "@/components/FeedbackWidget";
 import { NotificationProvider } from "@/context/NotificationContext";
+import { WalletProvider } from "@/context/WalletContext";
 
 export default function RootLayout({
   children,
@@ -23,12 +24,14 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${inter.className} antialiased text-slate-100 bg-slate-950 flex flex-col min-h-screen justify-between`}>
         <NotificationProvider>
-          <div>
-            <Navbar />
-            {children}
-          </div>
-          <Footer />
-          <FeedbackWidget />
+          <WalletProvider>
+            <div>
+              <Navbar />
+              {children}
+            </div>
+            <Footer />
+            <FeedbackWidget />
+          </WalletProvider>
         </NotificationProvider>
       </body>
     </html>

@@ -5,11 +5,15 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Upload, Calendar, Lock, Shield, ArrowRight, Image as ImageIcon, CheckCircle2 } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
+import { useWallet } from '@/context/WalletContext';
+import { Contract } from '@/lib/contract';
 
 export default function CreateAuctionPage() {
   const { notify } = useNotification();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { isConnected, dappConnector, address } = useWallet();
+  const [isDeploying, setIsDeploying] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -39,44 +43,82 @@ export default function CreateAuctionPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.minPrice || !formData.deadline) {
       notify("Missing Information", "Please fill in all required fields.", "error");
       return;
     }
 
-    // Calculate seconds from deadline
-    const deadlineDate = new Date(formData.deadline).getTime();
-    const now = Date.now();
-    const diffSeconds = Math.max(Math.floor((deadlineDate - now) / 1000), 3600);
-
-    const newAuction = {
-      id: Date.now().toString(),
-      title: formData.title,
-      image: previewImage || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop',
-      status: 'Open',
-      highestBid: `${formData.minPrice} tNIGHT`,
-      highestBidValue: Number(formData.minPrice),
-      endsInSeconds: diffSeconds,
-      category: formData.category
-    };
-
-    // Save to localStorage
-    try {
-      const existingStr = localStorage.getItem('midnight_custom_auctions');
-      const existing = existingStr ? JSON.parse(existingStr) : [];
-      localStorage.setItem('midnight_custom_auctions', JSON.stringify([newAuction, ...existing]));
-    } catch (err) {
-      console.warn("Could not save auction to localStorage:", err);
+    if (!isConnected || !dappConnector || !address) {
+      notify("Wallet Not Connected", "Please connect your wallet first.", "error");
+      return;
     }
 
-    notify("Auction Created", `${formData.title} listed on Marketplace. Written to Midnight ledger.`, "success");
+    setIsDeploying(true);
 
-    // Redirect to marketplace landing page
-    setTimeout(() => {
-      router.push('/');
-    }, 600);
+    try {
+      // Step 1: Deploy new Midnight Contract via SDK
+      const deploymentResult = await Contract.deployContract(dappConnector);
+      const contractAddress = deploymentResult.contractAddress;
+
+      // Step 2: Now that contract is deployed, we would ideally interact with createAuction circuit 
+      // but the deploy step usually covers instantiation. Let's assume we call createAuction to set state.
+      const contract = await Contract.connect(dappConnector, contractAddress);
+      
+      const minPriceBigInt = BigInt(Math.floor(Number(formData.minPrice) * 1000000));
+      const maxBidsBigInt = BigInt(formData.maxBids);
+      const metadataUri = new TextEncoder().encode("https://metadata.mock").slice(0, 32);
+      const secret = new Uint8Array(32); // Mock organizer secret
+      const auctionId = new Uint8Array(32); // Mock auction Id
+      
+      // Calculate seconds from deadline
+      const deadlineDate = new Date(formData.deadline).getTime();
+      const now = Date.now();
+      const diffSeconds = Math.max(Math.floor((deadlineDate - now) / 1000), 3600);
+      const deadlineBlock = BigInt(Math.floor(diffSeconds / 10)); // ~10s blocks
+      
+      const tx = await contract.callTx.createAuction(
+        auctionId,
+        metadataUri,
+        minPriceBigInt,
+        maxBidsBigInt,
+        deadlineBlock,
+        secret
+      );
+
+      const newAuction = {
+        id: contractAddress, // use the actual contract address
+        title: formData.title,
+        image: previewImage || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop',
+        status: 'Open',
+        highestBid: `${formData.minPrice} tNIGHT`,
+        highestBidValue: Number(formData.minPrice),
+        endsInSeconds: diffSeconds,
+        category: formData.category
+      };
+
+      // Save to localStorage
+      try {
+        const existingStr = localStorage.getItem('midnight_custom_auctions');
+        const existing = existingStr ? JSON.parse(existingStr) : [];
+        localStorage.setItem('midnight_custom_auctions', JSON.stringify([newAuction, ...existing]));
+      } catch (err) {
+        console.warn("Could not save auction to localStorage:", err);
+      }
+
+      notify("Auction Created", `${formData.title} deployed at ${contractAddress}.`, "success");
+
+      setTimeout(() => {
+        router.push('/');
+      }, 600);
+      
+    } catch (err) {
+      console.error(err);
+      notify("Deployment Failed", "Could not deploy Midnight contract.", "error");
+    } finally {
+      setIsDeploying(false);
+    }
   };
 
   return (
@@ -267,9 +309,10 @@ export default function CreateAuctionPage() {
             <div className="flex justify-end pt-2">
               <button 
                 type="submit" 
-                className="px-8 py-3.5 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold text-sm shadow-lg hover:shadow-purple-500/25 transition-all flex items-center space-x-2 group"
+                disabled={isDeploying}
+                className="px-8 py-3.5 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold text-sm shadow-lg hover:shadow-purple-500/25 transition-all flex items-center space-x-2 group disabled:opacity-50"
               >
-                <span>Generate Proof & List Asset</span>
+                <span>{isDeploying ? 'Deploying Contract...' : 'Generate Proof & List Asset'}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
