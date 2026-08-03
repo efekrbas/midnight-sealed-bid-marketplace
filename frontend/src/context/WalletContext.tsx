@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -22,8 +23,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const connectWallet = async () => {
     try {
-      // @ts-ignore - window.midnight is injected by the wallet extension
-      const midnight = window.midnight;
+      const midnight = (window as any).midnight;
       if (!midnight) {
         notify("Wallet Not Found", "Please install a Midnight compatible wallet like Lace.", "error");
         return;
