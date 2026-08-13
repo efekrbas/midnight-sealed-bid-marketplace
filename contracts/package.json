@@ -6,7 +6,7 @@
   "scripts": {
     "compact": "compact compile src/marketplace.compact src/managed/marketplace",
     "build": "echo \"Skipping compact compilation in CI\" && exit 0",
-    "test": "echo \"No contract tests defined\" && exit 0"
+    "test": "echo \"Tests not yet implemented\" && exit 1"
   },
   "devDependencies": {
     "@midnight-ntwrk/compact-runtime": "0.16.0"

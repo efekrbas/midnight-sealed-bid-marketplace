@@ -1,45 +1,29 @@
 "use client";
 
 import Link from 'next/link';
-import { Hexagon, Coins, ShieldCheck, Wallet, LogOut } from 'lucide-react';
+import { Hexagon, ShieldCheck, Wallet, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import OnboardingModal from './OnboardingModal';
-import FaucetModal from './FaucetModal';
 import ZkProofDrawer from './ZkProofDrawer';
-import { useNotification } from '@/context/NotificationContext';
-import { detectWallet } from '@/lib/midnight';
+import { useWallet } from '@/context/WalletContext';
 
 export default function Navbar() {
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showFaucet, setShowFaucet] = useState(false);
   const [showZkDrawer, setShowZkDrawer] = useState(false);
-  const [isConnected, setIsConnected] = useState(true);
-  const [balance, setBalance] = useState(1250.00);
-  const { notify } = useNotification();
+  const { isConnected, address, connectWallet, disconnectWallet } = useWallet();
 
   const handleConnect = async () => {
-    try {
-      await detectWallet();
-      setIsConnected(true);
-      notify("Wallet Connected", "Successfully connected to Midnight Preprod via Lace Wallet.", "success");
-    } catch (error) {
-      console.warn("No wallet extension found. Entering simulation mode.", error);
-      setIsConnected(true);
-      notify(
-        "Simulation Mode", 
-        "Lace/1AM wallet connection active on Midnight Preprod.", 
-        "info"
-      );
-    }
+    await connectWallet();
   };
 
   const handleDisconnect = () => {
-    setIsConnected(false);
-    notify("Wallet Disconnected", "Disconnected from Midnight Preprod testnet.", "info");
+    disconnectWallet();
   };
 
-  const handleClaimFaucet = (amount: number) => {
-    setBalance(prev => prev + amount);
+  const formatAddress = (addr: string | null) => {
+    if (!addr) return '';
+    if (addr.length <= 12) return addr;
+    return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
   };
 
   return (
@@ -73,22 +57,6 @@ export default function Navbar() {
               <span className="hidden md:inline">ZK Inspector</span>
             </button>
 
-            {/* Balance Badge & Faucet */}
-            {isConnected && (
-              <div className="flex items-center rounded-full bg-slate-900 border border-white/10 p-1">
-                <div className="px-2.5 py-1 text-xs font-mono font-bold text-slate-200 flex items-center space-x-1">
-                  <Coins className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{balance.toLocaleString('en-US', { minimumFractionDigits: 0 })} tNIGHT</span>
-                </div>
-                <button
-                  onClick={() => setShowFaucet(true)}
-                  className="px-2.5 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-bold font-mono transition-colors"
-                >
-                  + Faucet
-                </button>
-              </div>
-            )}
-
             {/* Wallet Connect / Disconnect */}
             {isConnected ? (
               <button 
@@ -97,7 +65,7 @@ export default function Navbar() {
                 className="px-3.5 py-1.5 rounded-full bg-emerald-500/10 hover:bg-rose-500/20 border border-emerald-500/30 hover:border-rose-500/40 text-xs font-mono font-bold text-emerald-300 hover:text-rose-300 flex items-center space-x-2 transition-all group"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-400 group-hover:bg-rose-400 animate-pulse" />
-                <span>0x3f...9a2</span>
+                <span>{formatAddress(address) || "Connected"}</span>
                 <LogOut className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity" />
               </button>
             ) : (
@@ -114,12 +82,6 @@ export default function Navbar() {
       </nav>
 
       {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
-      <FaucetModal 
-        isOpen={showFaucet} 
-        onClose={() => setShowFaucet(false)} 
-        onClaim={handleClaimFaucet} 
-        currentBalance={balance} 
-      />
       <ZkProofDrawer 
         isOpen={showZkDrawer} 
         onClose={() => setShowZkDrawer(false)} 

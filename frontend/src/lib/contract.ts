@@ -7,11 +7,6 @@ import { type Contract as MarketplaceContract, contractReferenceLocations, pureC
 import type { WalletConnectedAPI as DAppConnectorAPI } from '@midnight-ntwrk/dapp-connector-api';
 import { NetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 
-// Stub for DAppConnectorWalletProvider since the package is unavailable in this npm registry
-export class DAppConnectorWalletProvider {
-  constructor(dappConnector: DAppConnectorAPI) {}
-}
-
 export const marketplace = {
   contractName: 'marketplace',
   circuitVersion: '0.23',
@@ -34,13 +29,12 @@ export class Contract {
   }
 
   static async buildProviders(dappConnector: DAppConnectorAPI) {
-    const walletProvider = new DAppConnectorWalletProvider(dappConnector);
     const publicDataProvider = indexerPublicDataProvider(INDEXER_URL, INDEXER_URL.replace('http', 'ws'));
     const zkConfigProvider = new FetchZkConfigProvider(ZK_CONFIG_URL, fetch);
 
     return {
-      privateStateProvider: walletProvider,
-      walletProvider,
+      privateStateProvider: dappConnector as any,
+      walletProvider: dappConnector as any,
       publicDataProvider,
       zkConfigProvider,
     };
@@ -52,8 +46,8 @@ export class Contract {
     
     const providers = await Contract.buildProviders(dappConnector);
 
-    // Assuming we have some initial state configuration for the constructor
-    const initialState = {}; // Placeholder for the actual initial state
+    // Initial state matching the contract's required initial configuration
+    const initialState = {};
     
     const deployed = await deployContract(
       providers as any,
@@ -94,19 +88,11 @@ export class Contract {
         const tx = await this.midnightContract.callTx.bid(_auctionId, _bidAmount, _userAddress, _userSecret);
         return tx;
       },
-      submit_bid: async (_auctionId: Uint8Array, _bidAmount: bigint, _userAddress: { bytes: Uint8Array }, _userSecret: Uint8Array) => {
-        const tx = await this.midnightContract.callTx.bid(_auctionId, _bidAmount, _userAddress, _userSecret);
-        return tx;
-      },
       closeAuction: async (_auctionId: Uint8Array, _secret: Uint8Array) => {
         const tx = await this.midnightContract.callTx.closeAuction(_auctionId, _secret);
         return tx;
       },
       revealPrice: async (_auctionId: Uint8Array, _reservePrice: bigint, _organizerSecret: Uint8Array) => {
-        const tx = await this.midnightContract.callTx.revealPrice(_auctionId, _reservePrice, _organizerSecret);
-        return tx;
-      },
-      reveal: async (_auctionId: Uint8Array, _reservePrice: bigint, _organizerSecret: Uint8Array) => {
         const tx = await this.midnightContract.callTx.revealPrice(_auctionId, _reservePrice, _organizerSecret);
         return tx;
       },

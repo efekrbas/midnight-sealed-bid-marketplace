@@ -45,10 +45,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       
       try {
         const unshieldedInfo = await api.getUnshieldedAddress();
-        setAddress(unshieldedInfo.unshieldedAddress || "0x_connected");
+        setAddress(unshieldedInfo.unshieldedAddress || null);
       } catch (err) {
         console.warn("Could not get unshielded address", err);
-        setAddress("0x_connected");
+        setAddress(null);
       }
       
       notify("Wallet Connected", "Successfully connected to Midnight Preprod.", "success");
