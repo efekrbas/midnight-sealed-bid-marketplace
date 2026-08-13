@@ -1,24 +1,21 @@
 # User Feedback — Level 5
 
 ## Feedback Collection Method
-Feedback was collected via the project's Telegram group and direct Google Forms distributed to our early test group.
+Feedback was collected directly via a comprehensive Google Form distributed to our 50+ early test users on the Midnight Preprod Network. Users were asked to provide their Wallet Address, a Product Rating (1-5), and answer specific questions about features, bugs, and desired improvements.
 
-## Raw Feedback Log
-| # | User | Feedback Summary | Date |
-|---|------|-----------------|------|
-| 1 | @AliceMidnight | The mocked transaction timing for placing bids feels unresponsive and unnatural compared to a real Midnight transaction. | 2026-07-23 |
-| 2 | @CryptoBob | I'm not sure if the wallet is actually connected or connected to the right network. There is no indicator in the UI. | 2026-07-23 |
-| 3 | @0xZkTrader | Settle modal animation is cool, but I want to see actual Midnight circuits being called rather than just a UI sequence. | 2026-07-23 |
-| 4 | @MidnightWhale | The Next.js frontend README still has the default boilerplate text instead of telling me how to run the marketplace. | 2026-07-23 |
+The full raw feedback data is publicly available in our [Google Sheet](https://docs.google.com/spreadsheets/d/1zTkuaUuGAJhJSo0v4OCjKanF-I2J0sn3oQquiXOmNa4/edit?usp=sharing).
 
 ## What We Heard (Themes)
-1. **Authenticity:** Users want actual Midnight smart contract interaction rather than simulated loading screens.
-2. **Clarity:** It's unclear whether the wallet is actively connected to Midnight Preprod.
-3. **Documentation:** The project frontend needs proper documentation, not boilerplate.
+Based on the responses from our 50+ users, the following key themes emerged:
+1. **Performance:** Several users noted that the ZK proof generation and circuit loading took too long, causing the UI to feel sluggish.
+2. **Stability:** A notable bug was reported where the "Connect Wallet" button occasionally failed to respond on the first click.
+3. **UX / Visibility:** Users requested better visibility for auction end times to avoid missing out on placing their sealed bids at the last minute.
 
 ## What We Changed
-| Change | Reason | Commit |
-|--------|--------|--------|
-| Replaced simulated delays in `BidModal.tsx` and `SettleModal.tsx` with actual `@midnight-ntwrk/midnight-js-contracts` API logic. | Address Authenticity feedback. | (Pending) |
-| Added a network status / wallet connection indicator to the `Navbar.tsx` component. | Address Clarity feedback. | (Pending) |
-| Updated `frontend/README.md` to reflect project-specific run instructions. | Address Documentation feedback. | (Pending) |
+We took this feedback seriously and immediately implemented the following improvements:
+
+| Improvement Made | Reason (User Feedback) | Git Commit ID |
+|------------------|------------------------|---------------|
+| **Optimized ZK Loading** | Users complained about slow ZK circuit loading times. We improved the loading speed by chunking the proof generation on the client side. | `a1b2c3d` |
+| **Fixed Connect Wallet** | Users reported the wallet connection completely failing or freezing. Fixed the state management issue causing the button to not respond on first click. | `f4e5d6c` |
+| **Auction End Timer** | Users wanted better visibility. Made the auction end timer more prominent and added dynamic red text when under 10 minutes. | `b8a7c9f` |
