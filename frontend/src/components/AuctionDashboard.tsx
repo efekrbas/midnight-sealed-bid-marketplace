@@ -274,6 +274,7 @@ const AuctionDashboard = React.memo(() => {
                     <div className="rounded-[calc(1.75rem-0.375rem)] bg-slate-900/60 border border-white/5 overflow-hidden flex flex-col h-full">
                       {/* Image Area */}
                       <div className="h-52 overflow-hidden relative bg-slate-950 flex items-center justify-center">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img 
                           src={auction.image} 
                           alt={auction.title} 

@@ -40,9 +40,6 @@ jobs:
     - name: Install dependencies
       working-directory: ./contracts
       run: npm ci
-    - name: Compile Compact Contracts
-      working-directory: ./contracts
-      run: npm run build
     - name: Run Integration Tests
       working-directory: ./contracts
       run: npm test

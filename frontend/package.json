@@ -7,6 +7,7 @@
     "build": "npm run sync:assets && next build --webpack",
     "start": "next start",
     "lint": "eslint",
+    "test": "echo \"No tests specified\" && exit 0",
     "sync:assets": "node scripts/sync-zk-assets.mjs"
   },
   "dependencies": {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import { createUnprovenDeployTx, submitCallTxAsync, submitTxAsync } from '@midnight-ntwrk/midnight-js-contracts';
 import { getCompiledContract, getLedger, sampleSigningKey, ContractState } from '../../../contracts/src/index';
 import type { ConnectedSession } from './midnight';

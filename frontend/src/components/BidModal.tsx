@@ -20,7 +20,7 @@ export default function BidModal({ auction, onClose }: BidModalProps) {
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
   const [loadingStep, setLoadingStep] = useState(0);
   const { notify } = useNotification();
-  const { isConnected, dappConnector, session, address, connectWallet } = useWallet();
+  const { isConnected, dappConnector, session, address } = useWallet();
 
   const steps = [
     "Generating ZK Proof...",

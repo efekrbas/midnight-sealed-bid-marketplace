@@ -67,6 +67,7 @@ export default function AuctionDetailModal({
 
             {/* Asset Header & Image */}
             <div className="h-56 rounded-2xl overflow-hidden relative bg-slate-950 mb-6 border border-white/10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={auction.image}
                 alt={auction.title}
