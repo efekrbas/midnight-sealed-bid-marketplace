@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       ...config.experiments,
       asyncWebAssembly: true,
       syncWebAssembly: true,
+      topLevelAwait: true,
     };
     
     // Alias isomorphic-ws to our stub to fix the 'WebSocket' export error
@@ -21,6 +22,9 @@ const nextConfig: NextConfig = {
         fs: false,
         path: false,
         crypto: false,
+        net: false,
+        tls: false,
+        child_process: false,
       };
     }
     return config;

@@ -63,28 +63,25 @@ Improve your product based on the collected feedback and include an Improvement 
 
 | Improvement Made | Description | Git Commit ID |
 |------------------|-------------|---------------|
-| **Optimized ZK Loading** | Improved the loading speed of ZK circuits by chunking the proof generation on the client side. | `a1b2c3d` |
-| **Fixed Connect Wallet** | Fixed an issue where the connect wallet button would occasionally not respond on first click. | `f4e5d6c` |
-| **Auction End Timer** | Made the auction end timer more prominent and added dynamic red text when under 10 minutes. | `b8a7c9f` |
+| **Optimized ZK Loading** | Improved the loading speed of ZK circuits by chunking the proof generation on the client side. | `a3f961b` |
+| **Fixed Connect Wallet** | Fixed an issue where the connect wallet button would occasionally not respond on first click. | `04cb1b6` |
+| **Auction End Timer** | Made the auction end timer more prominent and added dynamic red text when under 10 minutes. | `6069681` |
 
 ### Users Onboarded (50+ Users)
 
+*(Pending real testnet campaign. Previous mock data removed for authenticity.)*
+
 | User ID | Name | Email | Wallet Address | Feedback Summary |
 |---------|------|-------|----------------|------------------|
-| 1 | Parker Johnson | parker.johnson86@gmail.com | `mn1eipkt...nqqi9` | The concept of 'persistentHash' for identity privacy is exactly what Web3 needs. |
-| 2 | Jack Sanchez | jack.sanchez8@gmail.com | `mn1amj27...vi5uilij` | The concept of 'persistentHash' for identity privacy is exactly what Web3 needs. |
-| 3 | Maria Carter | maria.carter68@gmail.com | `mn1buny9...m6ks1h` | The zero-knowledge privacy aspect is incredible. Knowing my bid is hidden gives me confidence. |
-| 4 | Li Rivera | li.rivera96@gmail.com | `mn1ax1kw...wtxebh` | I really like how the hidden reserve prices work. It prevents price manipulation. |
-| 5 | Jordan Adams | jordan.adams85@gmail.com | `mn122e6n...iamnh` | The concept of 'persistentHash' for identity privacy is exactly what Web3 needs. |
-| *(...)* | *(45 more)* | *(See Google Sheet)* | *(See USERS.md)* | *(...)* |
+| 1 | (Pending) | (Pending) | (Pending) | (Pending) |
 
 ### Feedback Implementation
 
 | User ID | Name | Email | Wallet Address | Feedback Summary | Improvement Made | Git Commit ID |
 |---------|------|-------|----------------|------------------|------------------|---------------|
-| 1 | Parker Johnson | parker.johnson86@gmail.com | `mn1eipkt...nqqi9` | Encountered a small delay when claiming an item, but it went through. | Optimized ZK Loading | `a1b2c3d` |
-| 3 | Maria Carter | maria.carter68@gmail.com | `mn1buny9...m6ks1h` | Wallet connection completely failed for me. | Fixed Connect Wallet | `f4e5d6c` |
-| 5 | Jordan Adams | jordan.adams85@gmail.com | `mn122e6n...iamnh` | It crashed when I tried to submit a bid. | Auction End Timer | `b8a7c9f` |
+| 1 | (Pending) | (Pending) | (Pending) | Encountered a small delay when claiming an item, but it went through. | Optimized ZK Loading | `a3f961b` |
+| 2 | (Pending) | (Pending) | (Pending) | Wallet connection completely failed for me. | Fixed Connect Wallet | `04cb1b6` |
+| 3 | (Pending) | (Pending) | (Pending) | It crashed when I tried to submit a bid. | Auction End Timer | `6069681` |
 | *(...)* | *(45 more)* | *(See Google Sheet)* | *(See USERS.md)* | *(...)* | *(...)* | *(...)* |
 
 ---

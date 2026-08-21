@@ -1,0 +1,1 @@
+import * as wasm from '#self'; export function DustRegistration_() { return wasm.DustRegistration; }

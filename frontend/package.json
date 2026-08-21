@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack",
+    "build": "npm run sync:assets && next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "test": "echo \"No frontend tests defined\" && exit 0"
+    "sync:assets": "node scripts/sync-zk-assets.mjs"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "^2.5.0",

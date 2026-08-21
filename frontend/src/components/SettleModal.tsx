@@ -5,7 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Gavel, X, CheckCircle2, Loader2, Key, ArrowRight } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import { useWallet } from '@/context/WalletContext';
-import { Contract, marketplace } from '@/lib/contract';
+import { callTx } from '@/lib/contract';
+import { loadSecret } from '@/lib/secret';
+import { bech32ToUserAddress } from '@/lib/address';
 import { AuctionItem } from '@/types/auction';
 
 interface SettleModalProps {
@@ -17,7 +19,7 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
   const [loadingStep, setLoadingStep] = useState(0);
   const { notify } = useNotification();
-  const { isConnected, dappConnector, address } = useWallet();
+  const { isConnected, dappConnector, session, address } = useWallet();
 
   const steps = [
     "Locating Winning Bidder Commitment...",
@@ -33,33 +35,43 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
     try {
       // Step 1: Locating Winning Bidder Commitment...
       setLoadingStep(1);
-      if (!isConnected || !dappConnector || !address) {
+      if (!isConnected || !dappConnector || !session || !address) {
         notify("Wallet Not Connected", "Please connect your wallet first.", "error");
         setStatus("idle");
         return;
       }
       
-      const contractAddress = "02a8b9f4c3d2e1f8a7b6c5d4e3f2a1b0c9d8e7f6"; // From README
-      const contract = await Contract.connect(dappConnector, contractAddress);
+      const contractAddress = auction.id; // Use real contract address
       
-      const userSecret = new Uint8Array(32); // Mock
-      const organizerSecret = new Uint8Array(32); // Mock
-      const organizerAddress = { bytes: new Uint8Array(32) }; // Mock
-      const userAddress = { bytes: new Uint8Array(32) }; // Mock
+      const userSecret = loadSecret('bidder', contractAddress);
+      const organizerSecret = loadSecret('seller', contractAddress);
+      
+      if (!organizerSecret) {
+        throw new Error("Seller secret not found in local storage. Cannot settle.");
+      }
+      if (!userSecret) {
+         throw new Error("Bidder secret not found in local storage. Cannot claim.");
+      }
+      
+      const organizerAddress = bech32ToUserAddress(address, 'preprod');
+      const userAddress = bech32ToUserAddress(address, 'preprod'); // Just for demo, usually bidder calls claimItem
       const auctionId = new Uint8Array(32); // Mock
       
       // Step 2: Verifying ZK Proof of highest bid...
       setLoadingStep(2);
-      const revealTx = await contract.callTx.revealPrice(
+      await callTx.revealPrice(
+        session,
+        contractAddress,
         auctionId, 
         BigInt(Math.floor(Number(auction.highestBid) * 1000000)),
         organizerSecret
       );
-      await revealTx.wait();
       
       // Step 3: Transferring asset ownership...
       setLoadingStep(3);
-      const claimTx = await contract.callTx.claimItem(
+      await callTx.claimItem(
+        session,
+        contractAddress,
         auctionId, 
         userAddress, 
         userSecret
@@ -67,7 +79,9 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
       
       // Step 4: Releasing tNIGHT to seller...
       setLoadingStep(4);
-      const proceedsTx = await contract.callTx.claimProceeds(
+      await callTx.claimProceeds(
+        session,
+        contractAddress,
         auctionId, 
         organizerAddress, 
         organizerSecret

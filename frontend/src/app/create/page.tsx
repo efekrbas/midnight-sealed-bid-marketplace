@@ -6,13 +6,14 @@ import { motion } from 'framer-motion';
 import { Upload, Calendar, Lock, Shield, ArrowRight, Image as ImageIcon, CheckCircle2 } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import { useWallet } from '@/context/WalletContext';
-import { Contract } from '@/lib/contract';
+import { deployAuction, callTx } from '@/lib/contract';
+import { generateSecret, saveSecret } from '@/lib/secret';
 
 export default function CreateAuctionPage() {
   const { notify } = useNotification();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { isConnected, dappConnector, address } = useWallet();
+  const { isConnected, dappConnector, session, address } = useWallet();
   const [isDeploying, setIsDeploying] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -50,7 +51,7 @@ export default function CreateAuctionPage() {
       return;
     }
 
-    if (!isConnected || !dappConnector || !address) {
+    if (!isConnected || !dappConnector || !session || !address) {
       notify("Wallet Not Connected", "Please connect your wallet first.", "error");
       return;
     }
@@ -59,32 +60,41 @@ export default function CreateAuctionPage() {
 
     try {
       // Step 1: Deploy new Midnight Contract via SDK
-      const deploymentResult = await Contract.deployContract(dappConnector);
-      const contractAddress = deploymentResult.contractAddress;
-
-      // Step 2: Now that contract is deployed, we would ideally interact with createAuction circuit 
-      // but the deploy step usually covers instantiation. Let's assume we call createAuction to set state.
-      const contract = await Contract.connect(dappConnector, contractAddress);
-      
       const minPriceBigInt = BigInt(Math.floor(Number(formData.minPrice) * 1000000));
       const maxBidsBigInt = BigInt(formData.maxBids);
       const metadataUri = new TextEncoder().encode("https://metadata.mock").slice(0, 32);
-      const secret = new Uint8Array(32); // Mock organizer secret
-      const auctionId = new Uint8Array(32); // Mock auction Id
       
+      const sellerSecret = generateSecret();
+      const auctionId = new Uint8Array(32);
+      crypto.getRandomValues(auctionId);
+      
+      const deploymentResult = await deployAuction(
+        session,
+        Number(formData.minPrice),
+        Number(formData.maxBids),
+        sellerSecret
+      );
+      const contractAddress = deploymentResult.contractAddress;
+
+      // Save secret for later reveals
+      saveSecret('seller', contractAddress, sellerSecret);
+
       // Calculate seconds from deadline
       const deadlineDate = new Date(formData.deadline).getTime();
       const now = Date.now();
       const diffSeconds = Math.max(Math.floor((deadlineDate - now) / 1000), 3600);
       const deadlineBlock = BigInt(Math.floor(diffSeconds / 10)); // ~10s blocks
       
-      const tx = await contract.callTx.createAuction(
+      // Step 2: Initialize circuit parameters
+      await callTx.createAuction(
+        session,
+        contractAddress,
         auctionId,
         metadataUri,
         minPriceBigInt,
         maxBidsBigInt,
         deadlineBlock,
-        secret
+        sellerSecret
       );
 
       const newAuction = {

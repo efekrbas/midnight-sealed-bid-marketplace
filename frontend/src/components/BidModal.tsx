@@ -5,7 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Lock, X, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import { useWallet } from '@/context/WalletContext';
-import { Contract, marketplace } from '@/lib/contract';
+import { callTx } from '@/lib/contract';
+import { generateSecret, saveSecret, loadSecret } from '@/lib/secret';
+import { bech32ToUserAddress } from '@/lib/address';
 import { AuctionItem } from '@/types/auction';
 
 interface BidModalProps {
@@ -18,7 +20,7 @@ export default function BidModal({ auction, onClose }: BidModalProps) {
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
   const [loadingStep, setLoadingStep] = useState(0);
   const { notify } = useNotification();
-  const { isConnected, dappConnector, address, connectWallet } = useWallet();
+  const { isConnected, dappConnector, session, address, connectWallet } = useWallet();
 
   const steps = [
     "Generating ZK Proof...",
@@ -37,24 +39,30 @@ export default function BidModal({ auction, onClose }: BidModalProps) {
     try {
       // Step 1: Generating ZK Proof...
       setLoadingStep(1);
-      if (!isConnected || !dappConnector || !address) {
+      if (!isConnected || !dappConnector || !session || !address) {
         notify("Wallet Not Connected", "Please connect your wallet first.", "error");
         setStatus("idle");
         return;
       }
       
-      const contractAddress = "02a8b9f4c3d2e1f8a7b6c5d4e3f2a1b0c9d8e7f6"; // From README
-      const contract = await Contract.connect(dappConnector, contractAddress);
+      const contractAddress = auction.id; // Use real contract address
       const bidValue = BigInt(Math.floor(Number(bidAmount) * 1000000)); // convert to token units
       
-      const userSecret = new Uint8Array(32); // Mock secret for now, should come from user input or derivation
-      const auctionId = new Uint8Array(32); // Mock auction ID
-      // Provide proper bytes object
-      const userAddress = { bytes: new TextEncoder().encode(address).slice(0, 32) };
+      // Load or generate bidder secret
+      let userSecret = loadSecret('bidder', contractAddress);
+      if (!userSecret) {
+        userSecret = generateSecret();
+        saveSecret('bidder', contractAddress, userSecret);
+      }
+      
+      const auctionId = new Uint8Array(32); // Assuming same id used for bidding in MVP
+      const userAddress = bech32ToUserAddress(address, 'preprod');
       
       // Step 2: Proving bid > current threshold...
       setLoadingStep(2);
-      const tx = await contract.callTx.bid(
+      await callTx.bid(
+        session,
+        contractAddress,
         auctionId, 
         bidValue, 
         userAddress, 

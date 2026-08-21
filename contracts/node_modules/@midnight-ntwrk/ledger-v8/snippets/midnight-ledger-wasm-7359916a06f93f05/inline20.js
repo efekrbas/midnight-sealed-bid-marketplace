@@ -1,0 +1,1 @@
+import * as wasm from '#self'; export function ContractDeploy_() { return wasm.ContractDeploy; }
