@@ -55,7 +55,9 @@ export default function SettleModal({ auction, onClose }: SettleModalProps) {
       
       const organizerAddress = bech32ToUserAddress(address, 'preprod');
       const userAddress = bech32ToUserAddress(address, 'preprod'); // Just for demo, usually bidder calls claimItem
-      const auctionId = new Uint8Array(32); // Mock
+      const auctionId = new Uint8Array(32);
+      const encodedAddress = new TextEncoder().encode(contractAddress);
+      auctionId.set(encodedAddress.slice(0, 32));
       
       // Step 2: Verifying ZK Proof of highest bid...
       setLoadingStep(2);

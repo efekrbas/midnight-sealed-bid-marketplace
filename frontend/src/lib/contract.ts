@@ -27,7 +27,7 @@ export async function deployAuction(
 ): Promise<{ contractAddress: string, deploymentTx: any }> {
   const reservePriceStars = reservePriceNight * 1_000_000;
   const cc = await makeCompiledContract();
-  const deployTxData = await (createUnprovenDeployTx as any)(
+  const deployTxData = await createUnprovenDeployTx(
     {
       zkConfigProvider: session.providers.zkConfigProvider,
       walletProvider: session.providers.walletProvider,
@@ -35,14 +35,13 @@ export async function deployAuction(
     {
       compiledContract: cc,
       args: [BigInt(reservePriceStars), BigInt(maxBidders), sellerSecret],
-      privateStateId: PRIVATE_STATE_ID,
       initialPrivateState: {},
       signingKey: sampleSigningKey(),
     },
   );
 
   const contractAddress = deployTxData.public.contractAddress;
-  await (submitTxAsync as any)(session.providers, { unprovenTx: deployTxData.private.unprovenTx });
+  await submitTxAsync(session.providers as any, { unprovenTx: deployTxData.private.unprovenTx });
   await session.providers.privateStateProvider.setContractAddress(contractAddress);
   await session.providers.privateStateProvider.set(PRIVATE_STATE_ID, {});
   await session.providers.privateStateProvider.setSigningKey(
@@ -59,12 +58,11 @@ async function call(
   args: unknown[],
 ) {
   const cc = await makeCompiledContract();
-  await (submitCallTxAsync as any)(session.providers, {
+  await submitCallTxAsync(session.providers as any, {
     compiledContract: cc,
     contractAddress,
     circuitId,
     args,
-    privateStateId: PRIVATE_STATE_ID,
   });
 }
 
@@ -102,17 +100,19 @@ export class Contract {
   }
 
   static async deployContract(session: ConnectedSession): Promise<{ contractAddress: string; deploymentTx: any }> {
-    // Generate mock deployment as our real deployment requires circuit params
-    // We'll return a mock address for UI purposes and let the real createAuction handle it
-    const mockAddr = "02" + Array.from(crypto.getRandomValues(new Uint8Array(19))).map(b => b.toString(16).padStart(2, '0')).join('');
+    // Generate secure random secret for legacy deploy mockup
+    const secret = crypto.getRandomValues(new Uint8Array(32));
+    // Provide some default arguments: reservePrice 0, maxBids 100
+    const { contractAddress, deploymentTx } = await deployAuction(session, 0, 100, secret);
     
-    // ensure providers has contractAddress set for future calls
-    await session.providers.privateStateProvider.setContractAddress(mockAddr);
-    await session.providers.privateStateProvider.set(PRIVATE_STATE_ID, {});
-    
+    // Save the secret for testing/mock purposes so that later we can close the auction
+    if (typeof window !== 'undefined') {
+       localStorage.setItem(`auction_secret_${contractAddress}`, Array.from(secret).map(b => b.toString(16).padStart(2, '0')).join(''));
+    }
+
     return {
-      contractAddress: mockAddr,
-      deploymentTx: {},
+      contractAddress,
+      deploymentTx,
     };
   }
 

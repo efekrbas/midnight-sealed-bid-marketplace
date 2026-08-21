@@ -65,8 +65,7 @@ export default function CreateAuctionPage() {
       const metadataUri = new TextEncoder().encode("https://metadata.mock").slice(0, 32);
       
       const sellerSecret = generateSecret();
-      const auctionId = new Uint8Array(32);
-      crypto.getRandomValues(auctionId);
+
       
       const deploymentResult = await deployAuction(
         session,
@@ -85,6 +84,10 @@ export default function CreateAuctionPage() {
       const diffSeconds = Math.max(Math.floor((deadlineDate - now) / 1000), 3600);
       const deadlineBlock = BigInt(Math.floor(diffSeconds / 10)); // ~10s blocks
       
+      const auctionId = new Uint8Array(32);
+      const encodedAddress = new TextEncoder().encode(contractAddress);
+      auctionId.set(encodedAddress.slice(0, 32));
+
       // Step 2: Initialize circuit parameters
       await callTx.createAuction(
         session,

@@ -55,7 +55,9 @@ export default function BidModal({ auction, onClose }: BidModalProps) {
         saveSecret('bidder', contractAddress, userSecret);
       }
       
-      const auctionId = new Uint8Array(32); // Assuming same id used for bidding in MVP
+      const auctionId = new Uint8Array(32);
+      const encodedAddress = new TextEncoder().encode(contractAddress);
+      auctionId.set(encodedAddress.slice(0, 32));
       const userAddress = bech32ToUserAddress(address, 'preprod');
       
       // Step 2: Proving bid > current threshold...

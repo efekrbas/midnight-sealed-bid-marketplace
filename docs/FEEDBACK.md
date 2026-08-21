@@ -16,6 +16,6 @@ We took this feedback seriously and immediately implemented the following improv
 
 | Improvement Made | Reason (User Feedback) | Git Commit ID |
 |------------------|------------------------|---------------|
-| **Optimized ZK Loading** | Users complained about slow ZK circuit loading times. We improved the loading speed by chunking the proof generation on the client side. | `a3f961b` |
-| **Fixed Connect Wallet** | Users reported the wallet connection completely failing or freezing. Fixed the state management issue causing the button to not respond on first click. | `04cb1b6` |
-| **Auction End Timer** | Users wanted better visibility. Made the auction end timer more prominent and added dynamic red text when under 10 minutes. | `6069681` |
+| **Optimized ZK Loading** | Users complained about slow ZK circuit loading times. We improved the loading speed by chunking the proof generation on the client side. | `4e7cb31` |
+| **Fixed Connect Wallet** | Users reported the wallet connection completely failing or freezing. Fixed the state management issue causing the button to not respond on first click. | `4845904` |
+| **Auction End Timer** | Users wanted better visibility. Made the auction end timer more prominent and added dynamic red text when under 10 minutes. | `aa0b693` |
