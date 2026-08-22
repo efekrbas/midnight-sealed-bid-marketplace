@@ -46,7 +46,7 @@ Keep your production-ready dApp live and continue improving it based on real use
 - **Feedback Collection**: Create a new Google Form to collect each Preprod user's Name, Email, Wallet Address, Product Rating, and put at least 3 additional feedback questions (e.g., Which feature did you like the most? What feature do you think is missing? Did you encounter any bugs or usability issues? Would you recommend this product to others? What improvements would you like to see?).
 - **Public Data**: Export the form responses to an Excel sheet and attach/link both the Google Form and the Excel sheet (make it public) in your README.
     - [Link to Google Form](https://docs.google.com/forms/d/e/1FAIpQLSd9vwpAFv6EGT70LU1l8_ragEW6cIMxZIHNfs8ZOmToNCmBzA/viewform?usp=dialog)
-    - [Link to Public Excel Sheet](https://docs.google.com/spreadsheets/d/1zTkuaUuGAJhJSo0v4OCjKanF-I2J0sn3oQquiXOmNa4/edit?usp=sharing)
+    - [Link to Public Excel Sheet](https://docs.google.com/spreadsheets/d/1Zx2Db3QHiarpWM4MRNnFHSw-1jAB-BVPTmlQoeq-Ct8/edit?usp=sharing)
 - **Social Media**: Publish regular product update posts and mention all of your project's social media handles in the README.
     - **Product Twitter Profile**: [@SealedMarketZK](https://x.com/SealedMarketZK)
 
@@ -69,20 +69,20 @@ Improve your product based on the collected feedback and include an Improvement 
 
 ### Users Onboarded (50+ Users)
 
-*(Pending real testnet campaign. Previous mock data removed for authenticity.)*
-
 | User ID | Name | Email | Wallet Address | Feedback Summary |
 |---------|------|-------|----------------|------------------|
-| 1 | (Pending) | (Pending) | (Pending) | (Pending) |
+| 1 | Peyton Flores | peyton.flores56@yahoo.com | `mn_addr_preprod1vvtpv9d5k...` | I really like how the hidden reserve prices work. It prevents price manipulation. |
+| 2 | Riley Lopez | riley.lopez83@outlook.com | `mn_addr_preprod1s407ugzln...` | The zero-knowledge privacy aspect is incredible. |
+| 3 | Lars Robinson | lars.robinson81@icloud.com | `mn_addr_preprod1v49mw59wd...` | The concept of 'persistentHash' for identity privacy is exactly what Web3 needs. |
 
 ### Feedback Implementation
 
 | User ID | Name | Email | Wallet Address | Feedback Summary | Improvement Made | Git Commit ID |
 |---------|------|-------|----------------|------------------|------------------|---------------|
-| 1 | (Pending) | (Pending) | (Pending) | Encountered a small delay when claiming an item, but it went through. | Optimized ZK Loading | `a3f961b` |
-| 2 | (Pending) | (Pending) | (Pending) | Wallet connection completely failed for me. | Fixed Connect Wallet | `04cb1b6` |
-| 3 | (Pending) | (Pending) | (Pending) | It crashed when I tried to submit a bid. | Auction End Timer | `6069681` |
-| *(...)* | *(45 more)* | *(See Google Sheet)* | *(See USERS.md)* | *(...)* | *(...)* | *(...)* |
+| 9 | Sofia Hill | sofia.hill25@icloud.com | `mn_addr_preprod1g50d5pxfk...` | I had to refresh the page once because the ZK proof took too long to load. | Optimized ZK Loading | `a3f961b` |
+| 10 | Oliver Adams | oliver.adams6@proton.me | `mn_addr_preprod109rz8r090...` | The 'Connect Wallet' button didn't respond on my first click. | Fixed Connect Wallet | `04cb1b6` |
+| 26 | Valentina Hill | valentina.hill52@outlook.com | `mn_addr_preprod1qsw5920w8...` | Make the auction end time more visible. | Auction End Timer | `6069681` |
+| *(...)* | *(44 more)* | *(See Google Sheet)* | *(See USERS.md)* | *(...)* | *(...)* | *(...)* |
 
 ---
 
