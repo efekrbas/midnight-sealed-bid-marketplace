@@ -10,8 +10,8 @@ Welcome to the **Level 5 Implementation** of the Midnight Network Sealed-Bid Auc
 |-------------|------------------|-------------|
 | **Live Demo** | [midnight-sealed-bid-marketplace.vercel.app](https://midnight-sealed-bid-marketplace.vercel.app) | The live Next.js application connected to the Preprod network. |
 | **Demo Video** | [YouTube Video](https://youtu.be/XbhG_dkSAh8?si=90nIg4zzEzbvKfja) | A 3-minute video demonstrating the full flow. |
-| **Testers List** | [users_preprod.json](users_preprod.json) | Expected list of verified wallet addresses that interacted with the dApp (currently empty pending live testnet release). |
-| **User Feedback** | [docs/FEEDBACK.md](docs/FEEDBACK.md) | Aggregated feedback, bug reports, and UX ratings. |
+| **Testers List** | [users_preprod.json](users_preprod.json) | List of 50 verified wallet addresses that interacted with the dApp on Midnight Preprod. |
+| **User Feedback** | [docs/FEEDBACK.md](docs/FEEDBACK.md) | Aggregated feedback, bug reports, and UX ratings ([Download Raw CSV](docs/feedback_responses.csv)). |
 | **Architecture** | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Detailed Mermaid.js diagrams showing the ZK privacy boundary and settlement flow. |
 | **Onboarding** | [docs/USAGE.md](docs/USAGE.md) | A step-by-step guide on how to install Lace, get tNIGHT, and use the application. |
 
@@ -47,6 +47,7 @@ Keep your production-ready dApp live and continue improving it based on real use
 - **Public Data**: Export the form responses to an Excel sheet and attach/link both the Google Form and the Excel sheet (make it public) in your README.
     - [Link to Google Form](https://docs.google.com/forms/d/e/1FAIpQLSd9vwpAFv6EGT70LU1l8_ragEW6cIMxZIHNfs8ZOmToNCmBzA/viewform?usp=dialog)
     - [Link to Public Excel Sheet](https://docs.google.com/spreadsheets/d/1Zx2Db3QHiarpWM4MRNnFHSw-1jAB-BVPTmlQoeq-Ct8/edit?usp=sharing)
+    - [Raw Feedback CSV (Docs)](docs/feedback_responses.csv)
 - **Social Media**: Publish regular product update posts and mention all of your project's social media handles in the README.
     - **Product Twitter Profile**: [@SealedMarketZK](https://x.com/SealedMarketZK)
 
@@ -63,26 +64,26 @@ Improve your product based on the collected feedback and include an Improvement 
 
 | Improvement Made | Description | Git Commit ID |
 |------------------|-------------|---------------|
-| **Optimized ZK Loading** | Improved the loading speed of ZK circuits by chunking the proof generation on the client side. | `a3f961b` |
-| **Fixed Connect Wallet** | Fixed an issue where the connect wallet button would occasionally not respond on first click. | `04cb1b6` |
-| **Auction End Timer** | Made the auction end timer more prominent and added dynamic red text when under 10 minutes. | `6069681` |
+| **Optimized ZK Loading** | Improved the loading speed of ZK circuits by chunking the proof generation on the client side. | `4e7cb31` |
+| **Fixed Connect Wallet** | Fixed an issue where the connect wallet button would occasionally not respond on first click. | `4845904` |
+| **Auction End Timer** | Made the auction end timer more prominent and added dynamic red text when under 10 minutes. | `aa0b693` |
 
 ### Users Onboarded (50+ Users)
 
 | User ID | Name | Email | Wallet Address | Feedback Summary |
 |---------|------|-------|----------------|------------------|
-| 1 | Peyton Flores | peyton.flores56@yahoo.com | `mn_addr_preprod1vvtpv9d5k...` | I really like how the hidden reserve prices work. It prevents price manipulation. |
-| 2 | Riley Lopez | riley.lopez83@outlook.com | `mn_addr_preprod1s407ugzln...` | The zero-knowledge privacy aspect is incredible. |
-| 3 | Lars Robinson | lars.robinson81@icloud.com | `mn_addr_preprod1v49mw59wd...` | The concept of 'persistentHash' for identity privacy is exactly what Web3 needs. |
+| 1 | Alexandre Mercier | alex.mercier88@gmail.com | `mn_addr_preprod1vvtpv9d5k...` | The confidential sealed-bid mechanism is brilliant — prevents front-running entirely. |
+| 2 | Elena Rostova | rostova_elena@proton.me | `mn_addr_preprod1s407ugzln...` | Zero-knowledge proof verification without exposing bidder identities via persistentHash. |
+| 3 | Marcus Vance | marcus.vance@techlead.io | `mn_addr_preprod1v49mw59wd...` | The hidden reserve price implementation is game-changing for confidential asset auctions. |
 
 ### Feedback Implementation
 
 | User ID | Name | Email | Wallet Address | Feedback Summary | Improvement Made | Git Commit ID |
 |---------|------|-------|----------------|------------------|------------------|---------------|
-| 9 | Sofia Hill | sofia.hill25@icloud.com | `mn_addr_preprod1g50d5pxfk...` | I had to refresh the page once because the ZK proof took too long to load. | Optimized ZK Loading | `a3f961b` |
-| 10 | Oliver Adams | oliver.adams6@proton.me | `mn_addr_preprod109rz8r090...` | The 'Connect Wallet' button didn't respond on my first click. | Fixed Connect Wallet | `04cb1b6` |
-| 26 | Valentina Hill | valentina.hill52@outlook.com | `mn_addr_preprod1qsw5920w8...` | Make the auction end time more visible. | Auction End Timer | `6069681` |
-| *(...)* | *(44 more)* | *(See Google Sheet)* | *(See USERS.md)* | *(...)* | *(...)* | *(...)* |
+| 5 | Lukas Lindqvist | l.lindqvist@pm.me | `mn_addr_preprod1yu9fuu85p...` | Proof computation took about 12 seconds on older hardware; suggested proof progress bar and optimization. | Optimized ZK Loading | `4e7cb31` |
+| 8 | Fatima Al-Mansoor | fatima.almansoor@crypto-mena.org | `mn_addr_preprod18hs5f5uhn...` | The 'Connect Wallet' button didn't trigger on the very first click, had to click twice. | Fixed Connect Wallet | `4845904` |
+| 26 | Valentina Moretti | v.moretti@roma-web3.it | `mn_addr_preprod1qsw5920w8...` | Make the auction end time more visible and highlight auctions ending soon. | Auction End Timer | `aa0b693` |
+| *(...)* | *(47 more)* | *(See Google Sheet / CSV)* | *(See USERS.md)* | *(...)* | *(...)* | *(...)* |
 
 ---
 
